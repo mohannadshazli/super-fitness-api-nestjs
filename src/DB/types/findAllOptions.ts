@@ -4,6 +4,6 @@ export interface FindAllOptions {
   orderBy?: string; 
   page?: number;
   limit?: number;
-    orderDirection?: 'ASC' | 'DESC';
+  orderDirection?: 'ASC' | 'DESC';
   select?: string; 
 }

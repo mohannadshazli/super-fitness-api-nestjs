@@ -1,10 +1,10 @@
 import { DataSource, EntityTarget, ObjectLiteral } from 'typeorm';
-import { FindAllOptions } from './types/findAllOptions';
+import { FindAllOptions } from '../types/findAllOptions';
 
 export abstract class AbstractRepository<T extends ObjectLiteral> {
   protected abstract readonly entity: EntityTarget<T>;
 
-  constructor(protected readonly dataSource: DataSource) {}
+  constructor(protected readonly dataSource: DataSource) { }
 
   protected get repository() {
     return this.dataSource.getRepository(this.entity);
@@ -55,10 +55,10 @@ export abstract class AbstractRepository<T extends ObjectLiteral> {
       .getOne();
   }
 
-async create(data: Partial<T>): Promise<T> {
-  const entity = this.repository.create(data as T);
-  return await this.repository.save(entity);
-}
+  async create(data: Partial<T>): Promise<T> {
+    const entity = this.repository.create(data as T);
+    return await this.repository.save(entity);
+  }
 
 
   async update(
