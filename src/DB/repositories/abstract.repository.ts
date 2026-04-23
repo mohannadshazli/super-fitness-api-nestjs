@@ -6,6 +6,8 @@ export abstract class AbstractRepository<T extends ObjectLiteral> {
 
   constructor(protected readonly dataSource: DataSource) { }
 
+ 
+
   protected get repository() {
     return this.dataSource.getRepository(this.entity);
   }
