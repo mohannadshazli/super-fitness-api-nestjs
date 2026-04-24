@@ -13,6 +13,14 @@ import type { Gender } from './dto/gender.type';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+
+
+
+
+
+
+  
+
   @Patch('gender')
   updateGender(@Req() req:AuthRequest, @Body('gender') gender: Gender) {
     const userId = req.user.id;

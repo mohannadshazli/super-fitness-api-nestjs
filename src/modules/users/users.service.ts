@@ -2,11 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { UserProfileRepository } from './repository/user-profile.repository';
 import { Gender } from './dto/gender.type';
 import { User } from './entities/user.entity';
+import { LoginDto } from '../auth/dto/login.dto';
+import { comparePassword } from '../../common/security/hash.util';
+import { UsersRepository } from './repository/users.repository';
 
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersProfileRepository: UserProfileRepository) {}
+  constructor(private readonly usersProfileRepository: UserProfileRepository, private readonly userRepo: UsersRepository) {}
 
   async getOrCreateProfile(userId: string) {
     let profile = await this.usersProfileRepository.findOne(
@@ -70,5 +73,23 @@ export class UsersService {
         registration_step: 4,
       },
     );
+  }
+
+
+
+
+  async validateUser(data:LoginDto) : Promise<User> {
+    const {email,password} = data;
+    const user = await this.userRepo.findOne('e.email = :email', {
+      email: email,
+    });
+    if (!user) {
+      throw new Error('Invalid credentials');
+    }
+    const isPasswordValid = await comparePassword(password, user.password);
+    if (!isPasswordValid) {
+      throw new Error('Invalid credentials');
+    }
+    return user;
   }
 }
