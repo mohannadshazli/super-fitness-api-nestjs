@@ -20,9 +20,9 @@ async function bootstrap() {
 
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, // يشيل أي field مش موجود في DTO
-      forbidNonWhitelisted: true, // يرمي error لو فيه field زيادة
-      transform: true, // يفعل class-transformer
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
     }),
   );
 
