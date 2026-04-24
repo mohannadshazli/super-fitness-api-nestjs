@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { RegisterDto } from './dto/register.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import { CreateUserDto } from '../users/dto/create-user.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -11,7 +11,7 @@ export class AuthController {
   @Post('register')
   @ApiOperation({ summary: 'Register new user' })
   @ApiBody({
-    type: RegisterDto,
+    type: CreateUserDto,
     description: 'User registration data',
   })
   @ApiResponse({
@@ -22,7 +22,7 @@ export class AuthController {
     status: 400,
     description: 'Validation error',
   })
-  register(@Body() dto: RegisterDto) {
+  register(@Body() dto: CreateUserDto) {
     return this.authService.register(dto);
   }
 }
