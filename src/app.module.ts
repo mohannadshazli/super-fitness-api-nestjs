@@ -7,7 +7,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { OnboardingModule } from './modules/onboarding/onboarding.module';
 import { FileUploadModule } from './common/services/file-upload-service/file-upload.module';
-import { MailerModule } from '@nestjs-modules/mailer';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -27,21 +26,9 @@ import { MailerModule } from '@nestjs-modules/mailer';
         synchronize: true,
       }),
     }),
+
     UsersModule,
     AuthModule,
-    MailerModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        transport: {
-          host: configService.get<string>('SMTP_HOST'),
-          port: configService.get<number>('SMTP_PORT'),
-          auth: {
-            user: configService.get<string>('SMTP_USER'),
-            pass: configService.get<string>('SMTP_PASSWORD'),
-          },
-        },
-      })
-    }),
     OnboardingModule,
     FileUploadModule,
   ],
