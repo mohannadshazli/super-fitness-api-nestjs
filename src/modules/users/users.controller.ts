@@ -1,47 +1,60 @@
-import {
-  Controller,
-  Body,
-  Patch,
-  Req,
-} from '@nestjs/common';
+import { Controller, Body, Patch, Req } from '@nestjs/common';
 import { UsersService } from './users.service';
 import type { AuthRequest } from '../../common/types/req.type';
 import type { Gender } from './dto/gender.type';
-
+import { UserGoal } from './dto/user-goal.enum';
+import { ActivityLevel } from './dto/user-activity-level.enum';
+import { ApiBody, ApiOperation } from '@nestjs/swagger';
+import {
+  UpdateActivityLevelDto,
+  UpdateGoalDto,
+} from './dto/update-goal-and-activity.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-
-
-
-
-
-
-  
-
   @Patch('gender')
-  updateGender(@Req() req:AuthRequest, @Body('gender') gender: Gender) {
+  updateGender(@Req() req: AuthRequest, @Body('gender') gender: Gender) {
     const userId = req.user.id;
     return this.usersService.updateGender(userId, gender);
   }
 
   @Patch('age')
-  updateAge(@Req() req :AuthRequest, @Body('age') age: number) {
+  updateAge(@Req() req: AuthRequest, @Body('age') age: number) {
     const userId = req.user.id;
     return this.usersService.updateAge(userId, age);
   }
 
   @Patch('weight')
-  updateWeight(@Req() req :AuthRequest, @Body('weight') weight: number) {
+  updateWeight(@Req() req: AuthRequest, @Body('weight') weight: number) {
     const userId = req.user.id;
     return this.usersService.updateWeight(userId, weight);
   }
 
   @Patch('height')
-  updateHeight(@Req() req :AuthRequest, @Body('height') height: number) {
-    const userId = req.user.id ;
+  updateHeight(@Req() req: AuthRequest, @Body('height') height: number) {
+    const userId = req.user.id;
     return this.usersService.updateHeight(userId, height);
+  }
+
+  @Patch('goal')
+  @ApiBody({ type: UpdateGoalDto })
+  updateGoal(@Req() req: AuthRequest, @Body() updateGoalDto: UpdateGoalDto) {
+    const userId = req.user.id;
+    return this.usersService.updateGoal(userId, updateGoalDto.goal);
+  }
+
+  @Patch('activity-level')
+  @ApiBody({ type: UpdateActivityLevelDto })
+  updateActivityLevel(
+    @Req() req: AuthRequest,
+    @Body() updateActivityLevelDto: UpdateActivityLevelDto,
+  ) {
+    const userId = req.user.id;
+    return this.usersService.updateActivityLevel(
+      userId,
+      updateActivityLevelDto.activityLevel,
+    );
   }
 }
