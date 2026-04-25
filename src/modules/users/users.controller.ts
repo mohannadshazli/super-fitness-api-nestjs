@@ -1,18 +1,37 @@
-import { Controller, Body, Patch, Req } from '@nestjs/common';
+import { Controller, Body, Patch, Req, Post } from '@nestjs/common';
 import { UsersService } from './users.service';
 import type { AuthRequest } from '../../common/types/req.type';
 import type { Gender } from './dto/gender.type';
 import { UserGoal } from './dto/user-goal.enum';
 import { ActivityLevel } from './dto/user-activity-level.enum';
-import { ApiBody, ApiOperation } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import {
   UpdateActivityLevelDto,
   UpdateGoalDto,
 } from './dto/update-goal-and-activity.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @Post()
+  @ApiOperation({ summary: 'Create new user' })
+  @ApiBody({
+    type: CreateUserDto,
+    description: 'User created data',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'User created successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Validation error',
+  })
+  createUser(@Body() dto: CreateUserDto) {
+    return this.usersService.createUser(dto);
+  }
 
   @Patch('gender')
   updateGender(@Req() req: AuthRequest, @Body('gender') gender: Gender) {

@@ -1,12 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { UserProfileRepository } from './repository/user-profile.repository';
 import { Gender } from './dto/gender.type';
 import { User } from './entities/user.entity';
 import { LoginDto } from '../auth/dto/login.dto';
-import { comparePassword } from '../../common/security/hash.util';
+import { comparePassword, hashPassword } from '../../common/security/hash.util';
 import { UsersRepository } from './repository/users.repository';
 import { UserGoal } from './dto/user-goal.enum';
 import { ActivityLevel } from './dto/user-activity-level.enum';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -14,6 +15,25 @@ export class UsersService {
     private readonly usersProfileRepository: UserProfileRepository,
     private readonly userRepo: UsersRepository,
   ) {}
+
+  async createUser(dto: CreateUserDto) {
+    const existingUser = await this.userRepo.findOne('e.email = :email', {
+      email: dto.email,
+    });
+
+    if (existingUser) {
+      throw new BadRequestException('Email already exists');
+    }
+
+    const hashedPassword = await hashPassword(dto.password);
+
+    const user = await this.userRepo.create({
+      ...dto,
+      password: hashedPassword,
+    });
+
+    return user;
+  }
 
   async getOrCreateProfile(userId: string) {
     let profile = await this.usersProfileRepository.findOne('user_id = $1', [
