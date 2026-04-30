@@ -13,6 +13,8 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { TokenRepository } from './reposatories/token.repository';
 import { ResetPasswordDto } from './dto/ResetPasswordDto';
 import { hashPassword } from '../../common/security/hash.util';
+
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -57,25 +59,11 @@ export class AuthService {
 
 
   async register(dto: CreateUserDto) {
-    const existingUser = await this.userRepo.findOne('e.email = :email', {
-      email: dto.email,
-    });
-
-    if (existingUser) {
-      throw new BadRequestException('Email already exists');
-    }
-
-  
-
-    const user = await this.userRepo.create({
-      ...dto,
-    });
-
-
+    const user = await this.UsersService.createUser(dto);
     return {
-      message: "user created successfully",
+      message: 'user created successfully',
       user,
-    }
+    };
   }
 
 

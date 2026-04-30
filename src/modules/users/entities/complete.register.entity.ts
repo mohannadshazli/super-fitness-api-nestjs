@@ -7,6 +7,8 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { User } from './user.entity';
+import { UserGoal } from '../dto/user-goal.enum';
+import { ActivityLevel } from '../dto/user-activity-level.enum';
 
 @Entity('user_profiles')
 export class UserProfile {
@@ -28,6 +30,20 @@ export class UserProfile {
 
   @Column({ nullable: true })
   height: number;
+
+  @Column({
+    type: 'enum',
+    enum: UserGoal,
+    nullable: true,
+  })
+  goal: UserGoal;
+
+  @Column({
+    type: 'enum',
+    enum: ActivityLevel,
+    nullable: true,
+  })
+  activity_level: ActivityLevel;
 
   @Column({ default: 0 })
   registration_step: number;

@@ -1,14 +1,14 @@
-import {
-  Controller,
-  Body,
-  Patch,
-  Req,
-} from '@nestjs/common';
+import { Controller, Body, Patch, Req, Post } from '@nestjs/common';
 import { UsersService } from './users.service';
 import type { AuthRequest } from '../../common/types/req.type';
 import type { Gender } from './dto/gender.type';
 import { ApiBearerAuth } from '@nestjs/swagger';
-
+import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  UpdateActivityLevelDto,
+  UpdateGoalDto,
+} from './dto/update-goal-and-activity.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Controller('users')
 @ApiBearerAuth()
@@ -22,6 +22,24 @@ export class UsersController {
 
 
 
+
+  @Post()
+  @ApiOperation({ summary: 'Create new user' })
+  @ApiBody({
+    type: CreateUserDto,
+    description: 'User created data',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'User created successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Validation error',
+  })
+  createUser(@Body() dto: CreateUserDto) {
+    return this.usersService.createUser(dto);
+  }
 
   @Patch('gender')
   updateGender(@Req() req: AuthRequest, @Body('gender') gender: Gender) {
@@ -45,5 +63,25 @@ export class UsersController {
   updateHeight(@Req() req: AuthRequest, @Body('height') height: number) {
     const userId = req.user.id;
     return this.usersService.updateHeight(userId, height);
+  }
+
+  @Patch('goal')
+  @ApiBody({ type: UpdateGoalDto })
+  updateGoal(@Req() req: AuthRequest, @Body() updateGoalDto: UpdateGoalDto) {
+    const userId = req.user.id;
+    return this.usersService.updateGoal(userId, updateGoalDto.goal);
+  }
+
+  @Patch('activity-level')
+  @ApiBody({ type: UpdateActivityLevelDto })
+  updateActivityLevel(
+    @Req() req: AuthRequest,
+    @Body() updateActivityLevelDto: UpdateActivityLevelDto,
+  ) {
+    const userId = req.user.id;
+    return this.usersService.updateActivityLevel(
+      userId,
+      updateActivityLevelDto.activityLevel,
+    );
   }
 }
