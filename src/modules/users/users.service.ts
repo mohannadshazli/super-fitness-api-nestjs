@@ -112,4 +112,21 @@ export class UsersService {
     }
     return user;
   }
+
+
+
+
+
+
+
+  UserExistsByEmail = async (email: string): Promise<User> => {
+
+    const user = await this.userRepo.findOne('e.email = :email', {
+      email: email,
+    });
+    if (!user) {
+      throw new Error('Invalid credentials');
+    }
+    return user;
+  }
 }

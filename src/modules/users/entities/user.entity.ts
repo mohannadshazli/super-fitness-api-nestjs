@@ -27,11 +27,12 @@ export class User {
   })
   role: UserRole;
 
-  @OneToOne(() => UserProfile, (profile) => profile.user)
-  profile: UserProfile;
+  @OneToOne(() => UserProfile, (profile) => profile.user, {
+    cascade: true,
+  })
 
 
-   @BeforeInsert()
+  @BeforeInsert()
   async hashPassword() {
     this.password = await hashPassword(this.password);
   }

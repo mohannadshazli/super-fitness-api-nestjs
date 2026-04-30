@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateOnboardingPageDto } from './dto/create-onboarding-page.dto';
 import { UpdateOnboardingPageDto } from './dto/update-onboarding-page.dto';
 import { CreateOnboardingPageWithImageDto } from './dto/create-onboarding-page-with-image.dto';
 import { OnboardingRepository } from './repository/onboarding.repository';

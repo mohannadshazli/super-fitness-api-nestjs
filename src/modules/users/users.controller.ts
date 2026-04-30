@@ -2,8 +2,7 @@ import { Controller, Body, Patch, Req, Post } from '@nestjs/common';
 import { UsersService } from './users.service';
 import type { AuthRequest } from '../../common/types/req.type';
 import type { Gender } from './dto/gender.type';
-import { UserGoal } from './dto/user-goal.enum';
-import { ActivityLevel } from './dto/user-activity-level.enum';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import {
   UpdateActivityLevelDto,
@@ -12,8 +11,17 @@ import {
 import { CreateUserDto } from './dto/create-user.dto';
 
 @Controller('users')
+@ApiBearerAuth()
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
+
+
+
+
+
+
+
+
 
   @Post()
   @ApiOperation({ summary: 'Create new user' })
