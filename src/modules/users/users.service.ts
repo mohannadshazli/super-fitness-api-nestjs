@@ -9,7 +9,7 @@ import { UsersRepository } from './repository/users.repository';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersProfileRepository: UserProfileRepository, private readonly userRepo: UsersRepository) {}
+  constructor(private readonly usersProfileRepository: UserProfileRepository, private readonly userRepo: UsersRepository) { }
 
   async getOrCreateProfile(userId: string) {
     let profile = await this.usersProfileRepository.findOne(
@@ -78,16 +78,29 @@ export class UsersService {
 
 
 
-  async validateUser(data:LoginDto) : Promise<User> {
-    const {email,password} = data;
+  async validateUser(data: LoginDto): Promise<User> {
+    const { email, password } = data;
+    const user = await this.userRepo.findOne('email = :email', {
+      email: email,
+    });
+
+    if (!user) {
+      throw new Error('user not found');
+    }
+    const isPasswordValid = await comparePassword(password, user.password);
+    if (!isPasswordValid) {
+      throw new Error('Invalid password');
+    }
+    return user;
+  }
+
+
+  UserExistsByEmail = async (email: string): Promise<User> => {
+
     const user = await this.userRepo.findOne('e.email = :email', {
       email: email,
     });
     if (!user) {
-      throw new Error('Invalid credentials');
-    }
-    const isPasswordValid = await comparePassword(password, user.password);
-    if (!isPasswordValid) {
       throw new Error('Invalid credentials');
     }
     return user;

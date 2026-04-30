@@ -1,16 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { AbstractRepository } from '../../../DB/repositories/abstract.repository';
-import { User } from '../entities/user.entity';
 import { DataSource } from 'typeorm';
+import { Otp } from '../entities/otp.entity';
 
 @Injectable()
-export class UsersRepository extends AbstractRepository<User> {
-  protected readonly entity = User;
+export class  OptRepository extends AbstractRepository<Otp> {
+  protected readonly entity = Otp;
 
   constructor(dataSource: DataSource) {
     super(dataSource);
-  }
-  async save(entity: User): Promise<User> {
-    return this.repository.save(entity);
   }
 }
