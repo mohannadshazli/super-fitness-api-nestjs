@@ -11,7 +11,6 @@ export class FileUploadService {
         { folder: 'fitness-app' },
         (error, result) => {
           if (error) return reject(error);
-
           resolve({
             image_url: result!.secure_url,
             image_public_id: result!.public_id,

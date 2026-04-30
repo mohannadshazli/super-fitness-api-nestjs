@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   UseInterceptors,
@@ -14,14 +13,15 @@ import { CreateOnboardingPageDto } from './dto/create-onboarding-page.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { multerConfig } from '../../common/services/file-upload-service/config/multer.config';
 import { FileUploadService } from '../../common/services/file-upload-service/file-upload.service';
-import { ApiBody, ApiConsumes } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes } from '@nestjs/swagger';
 
 @Controller('onboarding')
+@ApiBearerAuth()
 export class OnboardingController {
   constructor(
     private readonly onboardingService: OnboardingService,
     private readonly fileUploadService: FileUploadService,
-  ) {}
+  ) { }
 
   @Get()
   findAll() {

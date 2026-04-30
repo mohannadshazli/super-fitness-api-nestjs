@@ -57,6 +57,7 @@ export abstract class AbstractRepository<T extends ObjectLiteral> {
       .getOne();
   }
 
+  
   async create(data: Partial<T>): Promise<T> {
     const entity = this.repository.create(data as T);
     return await this.repository.save(entity);
@@ -84,7 +85,7 @@ export abstract class AbstractRepository<T extends ObjectLiteral> {
     if (!entity) return null;
 
     await this.repository
-      .createQueryBuilder()
+      .createQueryBuilder("e")
       .delete()
       .from(this.entity)
       .where(where, params)
@@ -92,4 +93,5 @@ export abstract class AbstractRepository<T extends ObjectLiteral> {
 
     return entity;
   }
+  
 }
