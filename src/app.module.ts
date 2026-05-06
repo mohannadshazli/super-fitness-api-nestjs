@@ -28,7 +28,7 @@ import { JobsModule } from './modules/jobs/jobs.module';
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: true,
+            synchronize: true,
       }),
     }),
     MailerModule.forRootAsync({

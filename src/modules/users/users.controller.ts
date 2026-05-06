@@ -1,4 +1,4 @@
-import { Controller, Body, Patch, Req, Post } from '@nestjs/common';
+import { Controller, Body, Patch, Req, Post, Get } from '@nestjs/common';
 import { UsersService } from './users.service';
 import type { AuthRequest } from '../../common/types/req.type';
 import type { Gender } from './dto/gender.type';
@@ -83,5 +83,12 @@ export class UsersController {
       userId,
       updateActivityLevelDto.activityLevel,
     );
+  }
+
+
+  @Get("get-user-data")
+  getUserData(@Req() req: AuthRequest) {
+    const userId = req.user.id;
+    return this.usersService.getUserData(userId);
   }
 }
