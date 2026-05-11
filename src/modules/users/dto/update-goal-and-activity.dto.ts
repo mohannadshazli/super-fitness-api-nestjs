@@ -1,17 +1,16 @@
-import { IsEnum } from 'class-validator';
+import { IsEnum, IsIn } from 'class-validator';
 import { ActivityLevel } from './user-activity-level.enum';
-import { UserGoal } from './user-goal.enum';
+import type { UserGoal } from './user-goal.enum';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateGoalDto {
-  @ApiProperty({
-    enum: UserGoal,
-    enumName: 'UserGoal',
+   @ApiProperty({
     description: 'The fitness goal of the user',
-    example: UserGoal.LOSE_WEIGHT,
+    example: 'LOSE_WEIGHT',
+    enum: ['LOSE_WEIGHT', 'GAIN_MUSCLE', 'FITNESS'],
     type: String,
   })
-  @IsEnum(UserGoal)
+  @IsIn(['LOSE_WEIGHT', 'GAIN_MUSCLE', 'FITNESS'])
   goal: UserGoal;
 }
 

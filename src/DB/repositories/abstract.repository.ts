@@ -93,5 +93,5 @@ export abstract class AbstractRepository<T extends ObjectLiteral> {
 
     return entity;
   }
-  
+
 }

@@ -5,9 +5,10 @@ import { User } from './entities/user.entity';
 import { LoginDto } from '../auth/dto/login.dto';
 import { comparePassword, hashPassword } from '../../common/security/hash.util';
 import { UsersRepository } from './repository/users.repository';
-import { UserGoal } from './dto/user-goal.enum';
+import type { UserGoal } from './dto/user-goal.enum';
 import { ActivityLevel } from './dto/user-activity-level.enum';
 import { CreateUserDto } from './dto/create-user.dto';
+import { WorkoutGoal } from '../workout/enums/workout.goal';
 
 @Injectable()
 export class UsersService {
@@ -59,37 +60,60 @@ export class UsersService {
   // UPDATE GENDER
   // ======================
   async updateGender(userId: string, gender: Gender) {
-    let profile = await this.usersProfileRepository.findOne(
+    const profile = await this.usersProfileRepository.findOne(
       'e.userId = :userId',
-      { userId }
+      { userId },
     );
 
-    if (profile) {
-      profile = await this.usersProfileRepository.create({
+    // 1) لو مفيش profile → اعمله
+    if (!profile) {
+      return this.usersProfileRepository.create({
         user: { id: userId } as User,
         gender,
         registration_step: 1,
       });
     }
 
-    return profile;
+    // 2) لو موجود → عدّل عليه
+    profile.gender = gender;
+    profile.registration_step = 1;
+
+    return this.usersProfileRepository.update(
+      'e.userId = :userId',
+      { userId },
+      profile,
+    );
   }
 
   // ======================
   // UPDATE AGE
   // ======================
   async updateAge(userId: string, age: number) {
-    const profile = await this.usersProfileRepository.findOne(
+    let profile = await this.usersProfileRepository.findOne(
       'e.userId = :userId',
-      { userId }
+      { userId },
     );
 
-    if (profile) {
-      profile.age = age;
-      profile.registration_step = 2;
+    // لو مفيش profile → اعمله
+    if (!profile) {
+      profile = await this.usersProfileRepository.create({
+        user: { id: userId } as User,
+        age,
+        registration_step: 2,
+      });
+
+      return profile;
     }
 
-    return profile;
+    // لو موجود → عدّل
+    profile.age = age;
+    profile.registration_step = 2;
+
+    return this.usersProfileRepository.update(
+      '"userId" = :userId',
+      { userId },
+      profile,
+    );
   }
 
   // ======================
@@ -101,14 +125,16 @@ export class UsersService {
       { userId }
     );
 
-    if (profile) {
-      profile.weight = weight;
-      profile.registration_step = 3;
+    if (!profile) return null;
 
-      return this.usersProfileRepository.create(profile);
-    }
+    profile.weight = weight;
+    profile.registration_step = 3;
 
-    return profile;
+    return this.usersProfileRepository.update(
+      '"userId" = :userId',
+      { userId },
+      profile,
+    );
   }
 
   // ======================
@@ -120,12 +146,16 @@ export class UsersService {
       { userId }
     );
 
-    if (profile) {
-      profile.height = height;
-      profile.registration_step = 4;
-    }
+    if (!profile) return null;
 
-    return profile;
+    profile.height = height;
+    profile.registration_step = 4;
+
+    return this.usersProfileRepository.update(
+      '"userId" = :userId',
+      { userId },
+      profile,
+    );
   }
 
   // ======================
@@ -138,7 +168,7 @@ export class UsersService {
     );
 
     if (profile) {
-      profile.goal = goal;
+      profile.goal = goal as WorkoutGoal;
       profile.registration_step = 5;
       return this.usersProfileRepository.create(profile);
     }

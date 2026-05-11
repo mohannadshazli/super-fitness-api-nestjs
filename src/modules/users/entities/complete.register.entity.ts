@@ -7,8 +7,8 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { User } from './user.entity';
-import { UserGoal } from '../dto/user-goal.enum';
 import { ActivityLevel } from '../dto/user-activity-level.enum';
+import { WorkoutGoal } from '../../workout/enums/workout.goal';
 
 @Entity('user_profiles')
 export class UserProfile {
@@ -33,10 +33,10 @@ export class UserProfile {
 
   @Column({
     type: 'enum',
-    enum: UserGoal,
+    enum: WorkoutGoal,
     nullable: true,
   })
-  goal: UserGoal;
+  goal: WorkoutGoal;
 
   @Column({
     type: 'enum',
