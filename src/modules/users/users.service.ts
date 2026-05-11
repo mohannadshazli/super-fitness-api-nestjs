@@ -203,19 +203,24 @@ export class UsersService {
   async validateUser(data: LoginDto): Promise<User> {
     const { email, password } = data;
 
+
     const user = await this.userRepo.findOne('e.email = :email', {
       email,
+
     });
+
 
     if (!user) {
       throw new Error('Invalid credentials');
     }
+
 
     const isPasswordValid = await comparePassword(password, user.password);
 
     if (!isPasswordValid) {
       throw new Error('Invalid credentials');
     }
+
 
     return user;
   }
@@ -228,9 +233,11 @@ export class UsersService {
       email,
     });
 
+
     if (!user) {
       throw new Error('Invalid credentials');
     }
+
 
     return user;
   };
