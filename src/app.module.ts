@@ -7,16 +7,18 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { OnboardingModule } from './modules/onboarding/onboarding.module';
 import { FileUploadModule } from './common/services/file-upload-service/file-upload.module';
-import { MailerModule } from '@nestjs-modules/mailer'
+import { MailerModule } from '@nestjs-modules/mailer';
 import { ScheduleModule } from '@nestjs/schedule';
 import { BullModule } from '@nestjs/bull';
 import { JobsModule } from './modules/jobs/jobs.module';
+import { HomeModule } from './modules/home/home.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-     ScheduleModule.forRoot(),
+    ScheduleModule.forRoot(),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -45,7 +47,7 @@ import { JobsModule } from './modules/jobs/jobs.module';
         },
       }),
     }),
-      BullModule.forRoot({
+    BullModule.forRoot({
       redis: {
         host: 'localhost',
         port: 6379,
@@ -55,9 +57,10 @@ import { JobsModule } from './modules/jobs/jobs.module';
     AuthModule,
     OnboardingModule,
     FileUploadModule,
-    JobsModule
+    JobsModule,
+    HomeModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}
