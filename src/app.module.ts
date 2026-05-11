@@ -11,8 +11,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { ScheduleModule } from '@nestjs/schedule';
 import { BullModule } from '@nestjs/bull';
 import { JobsModule } from './modules/jobs/jobs.module';
-import { HomeModule } from './modules/home/home.module';
-
+import { WorkoutModule } from './modules/workout/workout_exercise.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -30,7 +29,7 @@ import { HomeModule } from './modules/home/home.module';
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: true,
+            synchronize: true,
       }),
     }),
     MailerModule.forRootAsync({
@@ -58,7 +57,7 @@ import { HomeModule } from './modules/home/home.module';
     OnboardingModule,
     FileUploadModule,
     JobsModule,
-    HomeModule,
+    WorkoutModule
   ],
   controllers: [AppController],
   providers: [AppService],

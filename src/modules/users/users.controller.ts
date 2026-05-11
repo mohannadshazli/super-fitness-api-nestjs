@@ -77,9 +77,10 @@ export class UsersController {
     );
   }
 
-  @Get('get-user-data')
+
+  @Get("get-user-data")
   getUserData(@Req() req: AuthRequest) {
     const userId = req.user.id;
-    return this.usersService.getOrCreateProfile(userId);
+    return this.usersService.getUserData(userId);
   }
 }
