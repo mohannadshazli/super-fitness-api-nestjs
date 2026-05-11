@@ -13,15 +13,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 @Controller('users')
 @ApiBearerAuth()
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
-
-
-
-
-
-
-
-
+  constructor(private readonly usersService: UsersService) {}
 
   @Post()
   @ApiOperation({ summary: 'Create new user' })

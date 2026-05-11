@@ -7,7 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { OnboardingModule } from './modules/onboarding/onboarding.module';
 import { FileUploadModule } from './common/services/file-upload-service/file-upload.module';
-import { MailerModule } from '@nestjs-modules/mailer'
+import { MailerModule } from '@nestjs-modules/mailer';
 import { ScheduleModule } from '@nestjs/schedule';
 import { BullModule } from '@nestjs/bull';
 import { JobsModule } from './modules/jobs/jobs.module';
@@ -17,7 +17,7 @@ import { WorkoutModule } from './modules/workout/workout_exercise.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-     ScheduleModule.forRoot(),
+    ScheduleModule.forRoot(),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -46,7 +46,7 @@ import { WorkoutModule } from './modules/workout/workout_exercise.module';
         },
       }),
     }),
-      BullModule.forRoot({
+    BullModule.forRoot({
       redis: {
         host: 'localhost',
         port: 6379,
@@ -62,4 +62,4 @@ import { WorkoutModule } from './modules/workout/workout_exercise.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}
