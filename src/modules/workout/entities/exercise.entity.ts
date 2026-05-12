@@ -6,15 +6,18 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Workout } from './workout.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity('exercises')
 export class Exercise {
-
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column()
-  name: string;
+  title: string;
+
+  @Column('text')
+  description: string;
 
   @Column({ nullable: true })
   sets: number;
@@ -23,10 +26,24 @@ export class Exercise {
   reps: number;
 
   @Column({ nullable: true })
-  duration: string;
+  duration_in_minutes: number;
 
   @Column({ nullable: true })
-  rest: string;
+  rest_in_seconds: number;
+
+  @Column({ nullable: true })
+  image_url: string;
+
+  @Exclude()
+  @Column({ nullable: true })
+  image_public_id: string;
+
+  @Column({ nullable: true })
+  video_url: string;
+
+  @Exclude()
+  @Column({ nullable: true })
+  video_public_id: string;
 
   @ManyToOne(() => Workout, (workout) => workout.exercises, {
     onDelete: 'CASCADE',

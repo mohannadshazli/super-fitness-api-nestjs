@@ -4,7 +4,7 @@ import { UsersService } from '../users/users.service';
 import { UserProfile } from '../users/entities/complete.register.entity';
 import { UserGoal } from '../users/dto/user-goal.enum';
 import { ActivityLevel } from '../users/dto/user-activity-level.enum';
-
+import { WorkoutGoal } from '../workout/enums/workout.goal';
 
 @Injectable()
 export class FoodRecommendationService {
@@ -16,11 +16,11 @@ export class FoodRecommendationService {
   async recommend(userId: string, mealType: string) {
     const user = await this.userService.getOrCreateProfile(userId);
     console.log('User id:', userId); // Debugging log
-console.log('User Profile:', user); // Debugging log
+    console.log('User Profile:', user); // Debugging log
     const foods = await this.foodProviderService.fetchFoods(user, mealType);
 
     return foods
-      .map(food => ({
+      .map((food) => ({
         ...food,
         score: this.scoreFood(food, user, mealType),
       }))
@@ -53,15 +53,23 @@ console.log('User Profile:', user); // Debugging log
 
     // 🎯 Goal Score (20)
     let goalScore = 0;
-    if (user.goal === UserGoal.GAIN_WEIGHT && food.tags.includes('high_calorie'))
+    if (
+      user.goal === WorkoutGoal.GAIN_MUSCLE &&
+      food.tags.includes('high_calorie')
+    )
       goalScore = 40;
-    if (user.goal === UserGoal.LOSE_WEIGHT && food.tags.includes('low_calorie'))
+    if (
+      user.goal === WorkoutGoal.LOSE_WEIGHT &&
+      food.tags.includes('low_calorie')
+    )
       goalScore = 20;
 
     // 🏃 Activity Score (10)
     let activityScore = 0;
     if (
-      [ActivityLevel.ADVANCED, ActivityLevel.TRUE_BEAST].includes(user.activity_level) &&
+      [ActivityLevel.ADVANCED, ActivityLevel.TRUE_BEAST].includes(
+        user.activity_level,
+      ) &&
       food.tags.includes('high_protein')
     ) {
       activityScore = 10;
@@ -80,11 +88,11 @@ console.log('User Profile:', user); // Debugging log
     return user.daily_calories * ratio[mealType];
   }
 
-  getMacroTarget(goal: UserGoal) {
+  getMacroTarget(goal: WorkoutGoal) {
     switch (goal) {
-      case UserGoal.GAIN_WEIGHT:
-        return { protein: 0.25, carbs: 0.5, fats: 0.25 };
-      case UserGoal.LOSE_WEIGHT:
+      case WorkoutGoal.GAIN_MUSCLE:
+        return { protein: 0.3, carbs: 0.5, fats: 0.2 };
+      case WorkoutGoal.LOSE_WEIGHT:
         return { protein: 0.4, carbs: 0.3, fats: 0.3 };
       default:
         return { protein: 0.3, carbs: 0.4, fats: 0.3 };

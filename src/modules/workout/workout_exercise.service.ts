@@ -6,6 +6,8 @@ import { WorkoutRepo } from './repo/workout.repo';
 import { WorkoutLevel } from './enums/workout.level';
 import { CreateWorkoutDto } from './dto/create-workout.dto';
 import { UsersRepository } from '../users/repository/users.repository';
+import { UploadedFileResponse } from '../../common/types/uploaded-file.type';
+import { WorkoutGoal } from './enums/workout.goal';
 
 @Injectable()
 export class WorkoutService {
@@ -13,10 +15,13 @@ export class WorkoutService {
     private readonly exerciseRepo: ExerciseRepo,
     private readonly userProfileRepo: UserProfileRepository,
     private readonly workoutRepo: WorkoutRepo,
-    private readonly UsersRepository: UsersRepository
+    private readonly UsersRepository: UsersRepository,
   ) {}
 
-  async createExercise(workoutId: number, dto: CreateExerciseDto) {
+  async createExercise(
+    workoutId: number,
+    dto: CreateExerciseDto & UploadedFileResponse,
+  ) {
     return this.exerciseRepo.create({
       ...dto,
       workoutId,
@@ -42,23 +47,21 @@ export class WorkoutService {
   }
 
   async createWorkout(dto: CreateWorkoutDto) {
-  return this.workoutRepo.create(dto);
-}
+    return this.workoutRepo.create(dto);
+  }
 
   async getRecommendations(userId: string) {
     console.log(userId);
-    const profile = await this.userProfileRepo.findOne(
-      'e.userId = :userId',
-      { userId },
-    );
+    const profile = await this.userProfileRepo.findOne('e.userId = :userId', {
+      userId,
+    });
     if (!profile) {
       throw new Error('Profile not found');
     }
 
     const heightInMeters = profile.height / 100;
 
-    const bmi =
-      profile.weight / (heightInMeters * heightInMeters);
+    const bmi = profile.weight / (heightInMeters * heightInMeters);
 
     let suggestedLevel: WorkoutLevel = WorkoutLevel.BEGINNER;
 
@@ -82,5 +85,13 @@ export class WorkoutService {
       suggestedLevel,
       recommendations: workouts.data,
     };
+  }
+
+  async getExercisesByGoal(goal: WorkoutGoal, page: number, limit: number) {
+    return await this.exerciseRepo.findExercisesByWorkoutGoal(
+      goal,
+      page,
+      limit,
+    );
   }
 }

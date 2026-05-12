@@ -60,7 +60,7 @@ export class OnboardingController {
     @Body() body: CreateOnboardingPageDto,
   ) {
     const { image_url, image_public_id } =
-      await this.fileUploadService.uploadSingle(file);
+      await this.fileUploadService.uploadImage(file);
 
     return this.onboardingService.create({
       ...body,
