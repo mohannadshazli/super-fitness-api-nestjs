@@ -2,12 +2,12 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsNumber, IsString } from 'class-validator';
 import { UserGoal } from './user-goal.enum';
 import { ActivityLevel } from './user-activity-level.enum';
+import { WorkoutGoal } from '../../workout/enums/workout.goal';
 
 export enum Gender {
   MALE = 'male',
-  FEMALE = 'female'
+  FEMALE = 'female',
 }
-
 
 export class UpdateProfileDto {
   @ApiProperty({
@@ -17,10 +17,9 @@ export class UpdateProfileDto {
     example: Gender.MALE,
     type: String,
   })
-  @IsEnum(Gender)  
-  @IsString() 
-  gender: Gender;   
-
+  @IsEnum(Gender)
+  @IsString()
+  gender: Gender;
 
   @ApiProperty({
     description: 'The age of the user',
@@ -30,7 +29,7 @@ export class UpdateProfileDto {
   @IsNumber()
   age: number;
 
-    @ApiProperty({
+  @ApiProperty({
     description: 'The weight of the user in kg',
     example: 70,
     type: Number,
@@ -38,8 +37,7 @@ export class UpdateProfileDto {
   @IsNumber()
   weight: number;
 
-
-    @ApiProperty({
+  @ApiProperty({
     description: 'The height of the user in cm',
     example: 175,
     type: Number,
@@ -47,16 +45,15 @@ export class UpdateProfileDto {
   @IsNumber()
   height: number;
 
-    @ApiProperty({
-        enum: UserGoal,
-        enumName: 'UserGoal',
-        description: 'The fitness goal of the user',
-        example: UserGoal.LOSE_WEIGHT,
-        type: String,
-    })
-  @IsEnum(UserGoal)
-  goal: UserGoal;
-
+  @ApiProperty({
+    enum: WorkoutGoal,
+    enumName: 'WorkoutGoal',
+    description: 'The fitness goal of the user',
+    example: WorkoutGoal.LOSE_WEIGHT,
+    type: String,
+  })
+  @IsEnum(WorkoutGoal)
+  goal: WorkoutGoal;
 
   @ApiProperty({
     enum: ActivityLevel,
@@ -65,10 +62,6 @@ export class UpdateProfileDto {
     example: ActivityLevel.BEGINNER,
     type: String,
   })
-    @IsEnum(ActivityLevel)
+  @IsEnum(ActivityLevel)
   activityLevel: ActivityLevel;
-
-
-
 }
-

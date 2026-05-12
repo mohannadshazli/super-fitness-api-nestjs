@@ -5,11 +5,10 @@ import { User } from './entities/user.entity';
 import { LoginDto } from '../auth/dto/login.dto';
 import { comparePassword, hashPassword } from '../../common/security/hash.util';
 import { UsersRepository } from './repository/users.repository';
-import type { UserGoal } from './dto/user-goal.enum';
+import { UserGoal } from './dto/user-goal.enum';
 import { ActivityLevel } from './dto/user-activity-level.enum';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
-import { UserProfile } from './entities/complete.register.entity';
 import { WorkoutGoal } from '../workout/enums/workout.goal';
 
 @Injectable()
@@ -17,7 +16,7 @@ export class UsersService {
   constructor(
     private readonly usersProfileRepository: UserProfileRepository,
     private readonly userRepo: UsersRepository,
-  ) { }
+  ) {}
 
   // ======================
   // CREATE USER
@@ -45,7 +44,7 @@ export class UsersService {
   async getOrCreateProfile(userId: string) {
     let profile = await this.usersProfileRepository.findOne(
       'e.userId = :userId',
-      { userId }
+      { userId },
     );
 
     if (!profile) {
@@ -124,7 +123,7 @@ export class UsersService {
   async updateWeight(userId: string, weight: number) {
     const profile = await this.usersProfileRepository.findOne(
       'e.userId = :userId',
-      { userId }
+      { userId },
     );
 
     if (!profile) return null;
@@ -145,7 +144,7 @@ export class UsersService {
   async updateHeight(userId: string, height: number) {
     const profile = await this.usersProfileRepository.findOne(
       'e.userId = :userId',
-      { userId }
+      { userId },
     );
 
     if (!profile) return null;
@@ -166,7 +165,7 @@ export class UsersService {
   async updateGoal(userId: string, goal: UserGoal) {
     const profile = await this.usersProfileRepository.findOne(
       'e.userId = :userId',
-      { userId }
+      { userId },
     );
 
     if (profile) {
@@ -184,7 +183,7 @@ export class UsersService {
   async updateActivityLevel(userId: string, activityLevel: ActivityLevel) {
     let profile = await this.usersProfileRepository.findOne(
       'e.userId = :userId',
-      { userId }
+      { userId },
     );
 
     if (profile) {
@@ -192,9 +191,6 @@ export class UsersService {
       profile.registration_step = 6;
       profile = await this.usersProfileRepository.create(profile);
     }
-
-
-
 
     return profile;
   }
@@ -205,26 +201,21 @@ export class UsersService {
   async validateUser(data: LoginDto): Promise<User> {
     const { email, password } = data;
 
-
     const user = await this.userRepo.findOne('e.email = :email', {
       email,
-
     });
 
-
     if (!user) {
-      console.log("login user")
+      console.log('login user');
       throw new Error('Invalid credentials');
     }
-
 
     const isPasswordValid = await comparePassword(password, user.password);
 
     if (!isPasswordValid) {
-      console.log("login password")
+      console.log('login password');
       throw new Error('Invalid credentials');
     }
-
 
     return user;
   }
@@ -235,59 +226,6 @@ export class UsersService {
   UserExistsByEmail = async (email: string): Promise<User> => {
     const user = await this.userRepo.findOne('e.email = :email', {
       email,
-    });
-
-
-    if (!user) {
-      throw new Error('Invalid credentials');
-    }
-
-
-    return user;
-  }
-
-
-
-
-  async updateUserProfile(userId: string, dto: UpdateProfileDto) {
-    const dailyCalories = await this.calculateDailyCalories(dto);
-
-    return this.usersProfileRepository.update('"userId"= :userId', { userId }, {
-      gender: dto.gender,
-      age: dto.age,
-      weight: dto.weight,
-      height: dto.height,
-      goal: dto.goal,
-      activity_level: dto.activityLevel,
-      daily_calories: dailyCalories,
-    });
-  }
-
-  async calculateDailyCalories(data: UpdateProfileDto): Promise<number> {
-    const s = data.gender === 'male' ? 5 : -161;
-
-    const bmr =
-      10 * data.weight +
-      6.25 * data.height -
-      5 * data.age +
-      s;
-
-    const activityMultiplier = {
-      'Rookie': 1.2,
-      'Beginner': 1.375,
-      'Intermediate': 1.55,
-      'Advanced': 1.725,
-      'True Beast': 1.9,
-    };
-
-    let calories = bmr * activityMultiplier[data.activityLevel];
-
-    if (data.goal === UserGoal.GAIN_WEIGHT) calories += 400;
-    if (data.goal === UserGoal.LOSE_WEIGHT) calories -= 400;
-
-    return Math.round(calories);
-  }
-  };
     });
 
     if (!user) {
@@ -301,9 +239,47 @@ export class UsersService {
   // GET USER DATA
   // ======================
   async getUserData(userId: string) {
-    return this.usersProfileRepository.findOne(
-      'e.userId = :userId',
-      { userId }
+    return this.usersProfileRepository.findOne('e.userId = :userId', {
+      userId,
+    });
+  }
+
+  async updateUserProfile(userId: string, dto: UpdateProfileDto) {
+    const dailyCalories = await this.calculateDailyCalories(dto);
+
+    return this.usersProfileRepository.update(
+      '"userId"= :userId',
+      { userId },
+      {
+        gender: dto.gender,
+        age: dto.age,
+        weight: dto.weight,
+        height: dto.height,
+        goal: dto.goal,
+        activity_level: dto.activityLevel,
+        daily_calories: dailyCalories,
+      },
     );
+  }
+
+  async calculateDailyCalories(data: UpdateProfileDto): Promise<number> {
+    const s = data.gender === 'male' ? 5 : -161;
+
+    const bmr = 10 * data.weight + 6.25 * data.height - 5 * data.age + s;
+
+    const activityMultiplier = {
+      Rookie: 1.2,
+      Beginner: 1.375,
+      Intermediate: 1.55,
+      Advanced: 1.725,
+      'True Beast': 1.9,
+    };
+
+    let calories = bmr * activityMultiplier[data.activityLevel];
+
+    if (data.goal === WorkoutGoal.GAIN_MUSCLE) calories += 400;
+    if (data.goal === WorkoutGoal.LOSE_WEIGHT) calories -= 400;
+
+    return Math.round(calories);
   }
 }
