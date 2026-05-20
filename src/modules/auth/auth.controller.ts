@@ -1,20 +1,18 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBody,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
 import { SendDto } from './dto/sendOtp';
 import { ResetPasswordDto } from './dto/ResetPasswordDto';
 import { Public } from '../../common/decorators/public_decorator';
+import { post } from 'axios';
+import { UpdatePasswordDto } from '../users/dto/update-password.dto';
+import { type AuthRequest } from '../../common/types/req.type';
 
+@Public()
 @ApiTags('Auth')
 @Controller('auth')
-@Public()
 export class AuthController {
   constructor(private authService: AuthService) {}
 

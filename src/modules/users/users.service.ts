@@ -222,8 +222,7 @@ export class UsersService {
     const isPasswordValid = await comparePassword(password, user.password);
 
     if (!isPasswordValid) {
-      console.log('login password');
-      throw new Error('Invalid credentials');
+      throw new BadRequestException('Invalid credentials');
     }
 
     return user;
@@ -343,6 +342,38 @@ export class UsersService {
     return {
       success: true,
       message: 'Email updated successfully',
+    };
+  }
+
+  // ======================
+  // UPDATE PASSWORD
+  // ======================
+  async updatePassword(
+    userId: string,
+    oldPassword: string,
+    newPassword: string,
+  ) {
+    const user = await this.userRepo.findOne('id = :id', { id: userId });
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    const isPasswordValid = await comparePassword(oldPassword, user.password);
+
+    if (!isPasswordValid) {
+      throw new BadRequestException('Invalid password');
+    }
+
+    const hashedPassword = await hashPassword(newPassword);
+    await this.userRepo.update(
+      'id = :id',
+      { id: userId },
+      { password: hashedPassword },
+    );
+
+    return {
+      success: true,
+      message: 'Password updated successfully',
     };
   }
 }

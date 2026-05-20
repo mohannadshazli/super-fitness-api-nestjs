@@ -22,6 +22,7 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 import { CheckEmailDto } from './dto/check-email.dto';
 import { ResetEmailDto } from './dto/reset-email.dto';
 import { Public } from '../../common/decorators/public_decorator';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 
 @Controller('users')
 @ApiBearerAuth()
@@ -161,5 +162,24 @@ export class UsersController {
   resetUserEmail(@Req() req: AuthRequest, @Body() dto: ResetEmailDto) {
     const userId = req.user.id;
     return this.usersService.resetUserEmail(userId, dto.email, dto.otp);
+  }
+
+  @Post('update-password')
+  @ApiOperation({ summary: 'Update user password' })
+  @ApiBody({ type: UpdatePasswordDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Password updated successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid password',
+  })
+  updatePassword(@Req() req: AuthRequest, @Body() data: UpdatePasswordDto) {
+    return this.usersService.updatePassword(
+      req.user.id,
+      data.oldPassword,
+      data.newPassword,
+    );
   }
 }
