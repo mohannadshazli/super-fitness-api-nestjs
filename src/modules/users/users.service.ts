@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { UserProfileRepository } from './repository/user-profile.repository';
 import { Gender } from './dto/gender.type';
 import { User } from './entities/user.entity';
@@ -10,12 +15,16 @@ import { ActivityLevel } from './dto/user-activity-level.enum';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { WorkoutGoal } from '../workout/enums/workout.goal';
+import { AuthService } from '../auth/auth.service';
+import { OptRepository } from '../auth/reposatories/opt.repository';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly usersProfileRepository: UserProfileRepository,
     private readonly userRepo: UsersRepository,
+    @Inject(forwardRef(() => AuthService)) private authService: AuthService,
+    @Inject(forwardRef(() => OptRepository)) private optRepo: OptRepository,
   ) {}
 
   // ======================
@@ -281,5 +290,59 @@ export class UsersService {
     if (data.goal === WorkoutGoal.LOSE_WEIGHT) calories -= 400;
 
     return Math.round(calories);
+  }
+
+  // ======================
+  // UPDATE USER EMAIL
+  // ======================
+  async updateUserEmail(userId: string, newEmail: string) {
+    const existingUser = await this.userRepo.findOne('e.email = :email', {
+      email: newEmail,
+    });
+
+    if (existingUser) {
+      throw new BadRequestException('Email already exists');
+    }
+
+    await this.authService.generateOtp(newEmail);
+
+    return {
+      success: true,
+      message: 'OTP sent successfully',
+    };
+  }
+
+  // ======================
+  // RESET USER EMAIL
+  // ======================
+  async resetUserEmail(userId: string, newEmail: string, otp: string) {
+    const existingUser = await this.userRepo.findOne('e.email = :email', {
+      email: newEmail,
+    });
+
+    if (existingUser) {
+      throw new BadRequestException('Email already exists');
+    }
+
+    const existingOtp = await this.optRepo.findOne('e.email = :email', {
+      email: newEmail,
+    });
+
+    if (!existingOtp) {
+      throw new BadRequestException('Invalid OTP');
+    }
+
+    if (existingOtp.otp !== otp) {
+      throw new BadRequestException('Invalid OTP');
+    }
+
+    await this.userRepo.update('id = :id', { id: userId }, { email: newEmail });
+
+    await this.optRepo.delete('email = :email', { email: newEmail });
+
+    return {
+      success: true,
+      message: 'Email updated successfully',
+    };
   }
 }

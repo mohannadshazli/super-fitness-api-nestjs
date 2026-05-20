@@ -1,4 +1,13 @@
-import { Controller, Body, Patch, Req, Post, Get, BadRequestException, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Body,
+  Patch,
+  Req,
+  Post,
+  Get,
+  BadRequestException,
+  UseGuards,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import type { AuthRequest } from '../../common/types/req.type';
 import type { Gender } from './dto/gender.type';
@@ -10,7 +19,9 @@ import {
 } from './dto/update-goal-and-activity.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
-import { AuthGuard } from '../../common/guards/auth.guard';
+import { CheckEmailDto } from './dto/check-email.dto';
+import { ResetEmailDto } from './dto/reset-email.dto';
+import { Public } from '../../common/decorators/public_decorator';
 
 @Controller('users')
 @ApiBearerAuth()
@@ -34,7 +45,6 @@ export class UsersController {
   createUser(@Body() dto: CreateUserDto) {
     return this.usersService.createUser(dto);
   }
-
 
   @Post('get-or-create-profile')
   @ApiOperation({ summary: 'Get or create user profile' })
@@ -109,11 +119,47 @@ export class UsersController {
     return this.usersService.updateUserProfile(userId, updateProfileDto);
   }
 
-
-  @Get("get-user-data")
+  @Get('get-user-data')
   getUserData(@Req() req: AuthRequest) {
     const userId = req.user.id;
     return this.usersService.getUserData(userId);
   }
-}
 
+  @Post('update-user-email')
+  @ApiOperation({ summary: 'Update user email' })
+  @ApiBody({
+    type: CheckEmailDto,
+    description: 'New email to update',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Otp sent to new email successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Validation error',
+  })
+  updateUserEmail(@Req() req: AuthRequest, @Body() dto: CheckEmailDto) {
+    const userId = req.user.id;
+    return this.usersService.updateUserEmail(userId, dto.email);
+  }
+
+  @Post('reset-user-email')
+  @ApiOperation({ summary: 'Reset user email' })
+  @ApiBody({
+    type: ResetEmailDto,
+    description: 'New email and OTP to reset',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Email updated successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Validation error',
+  })
+  resetUserEmail(@Req() req: AuthRequest, @Body() dto: ResetEmailDto) {
+    const userId = req.user.id;
+    return this.usersService.resetUserEmail(userId, dto.email, dto.otp);
+  }
+}
