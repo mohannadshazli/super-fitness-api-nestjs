@@ -15,7 +15,9 @@ export class UserProfile {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => User, { onDelete: 'CASCADE' })
+  @OneToOne(() => User, (user) => user.profile, {
+  onDelete: 'CASCADE',
+})
   @JoinColumn({ name: 'userId' })
   user: User;
 
@@ -44,6 +46,11 @@ export class UserProfile {
     nullable: true,
   })
   activity_level: ActivityLevel;
+
+
+  @Column({ type: 'text', nullable: true })
+  profile_picture: string;
+
 
   @Column({ type: 'float', default: 0 })
   daily_calories: number;

@@ -1,15 +1,39 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsNumber, IsString } from 'class-validator';
-import { UserGoal } from './user-goal.enum';
-import { ActivityLevel } from './user-activity-level.enum';
+import {
+  IsOptional,
+  IsString,
+  MaxLength,
+  IsNumber,
+  IsPositive,
+  IsEnum,
+  IsUrl,
+} from 'class-validator';
+
 import { WorkoutGoal } from '../../workout/enums/workout.goal';
+import { ActivityLevel } from '../dto/user-activity-level.enum';
+import { Gender } from './complete-profile.dto';
+import { ApiProperty } from '@nestjs/swagger';
 
-export enum Gender {
-  MALE = 'male',
-  FEMALE = 'female',
-}
+export class UpdateUserProfileDto {
+    @ApiProperty({
+    description: 'The first name of the user',
+    example: 'John',
+    type: String,
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(50)
+  first_name?: string;
+    @ApiProperty({
+    description: 'The last name of the user',
+    example: 'Doe',
+    type: String,
+  })
 
-export class UpdateProfileDto {
+  @IsOptional()
+  @IsString()
+  @MaxLength(50)
+  last_name?: string;
+
   @ApiProperty({
     enum: Gender,
     enumName: 'Gender',
@@ -19,7 +43,7 @@ export class UpdateProfileDto {
   })
   @IsEnum(Gender)
   @IsString()
-  gender: Gender;
+  gender?: Gender;
 
   @ApiProperty({
     description: 'The age of the user',
@@ -27,41 +51,55 @@ export class UpdateProfileDto {
     type: Number,
   })
   @IsNumber()
-  age: number;
+  age?: number;
 
   @ApiProperty({
     description: 'The weight of the user in kg',
     example: 70,
     type: Number,
   })
+  @IsOptional()
   @IsNumber()
-  weight: number;
+  @IsPositive()
+  weight?: number;
 
-  @ApiProperty({
+    @ApiProperty({
     description: 'The height of the user in cm',
     example: 175,
     type: Number,
   })
+  @IsOptional()
   @IsNumber()
-  height: number;
+  @IsPositive()
+  height?: number;
 
-  @ApiProperty({
+    @ApiProperty({
     enum: WorkoutGoal,
     enumName: 'WorkoutGoal',
-    description: 'The fitness goal of the user',
+    description: 'The fitness goal of the user',    
     example: WorkoutGoal.LOSE_WEIGHT,
     type: String,
-  })
+    })
+  @IsOptional()
   @IsEnum(WorkoutGoal)
-  goal: WorkoutGoal;
+  goal?: WorkoutGoal;
 
-  @ApiProperty({
+    @ApiProperty({
     enum: ActivityLevel,
     enumName: 'ActivityLevel',
     description: 'The activity level of the user',
     example: ActivityLevel.BEGINNER,
     type: String,
   })
+  @IsOptional()
   @IsEnum(ActivityLevel)
-  activityLevel: ActivityLevel;
+  activity_level?: ActivityLevel;
+
+    @ApiProperty({
+    description: 'The profile picture URL of the user',
+    example: 'https://example.com/profile.jpg',
+  })
+  @IsOptional()
+  @IsUrl()
+  profile_picture?: string;
 }

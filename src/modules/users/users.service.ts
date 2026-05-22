@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  NotFoundException,
   forwardRef,
   Inject,
   Injectable,
@@ -13,10 +14,13 @@ import { UsersRepository } from './repository/users.repository';
 import { UserGoal } from './dto/user-goal.enum';
 import { ActivityLevel } from './dto/user-activity-level.enum';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateProfileDto } from './dto/update-profile.dto';
+import { CompleteProfileDto } from './dto/complete-profile.dto';
 import { WorkoutGoal } from '../workout/enums/workout.goal';
 import { AuthService } from '../auth/auth.service';
 import { OptRepository } from '../auth/reposatories/opt.repository';
+import { UpdateUserProfileDto } from './dto/update-profile.dto';
+import { UserProfile } from './entities/complete.register.entity';
+import { FindOptionsWhere } from 'typeorm';
 
 @Injectable()
 export class UsersService {
@@ -135,7 +139,7 @@ export class UsersService {
       { userId },
     );
 
-    if (!profile) return null;
+    if (!profile) return null; 
 
     profile.weight = weight;
     profile.registration_step = 3;
@@ -252,25 +256,116 @@ export class UsersService {
     });
   }
 
-  async updateUserProfile(userId: string, dto: UpdateProfileDto) {
-    const dailyCalories = await this.calculateDailyCalories(dto);
+ async completeProfile(
+  userId: string,
+  dto: CompleteProfileDto,
+) {
 
-    return this.usersProfileRepository.update(
-      '"userId"= :userId',
+  const daily_calories = await this.calculateDailyCalories(dto);
+       let profile = await this.usersProfileRepository.findOne(
+      'e.userId = :userId',
       { userId },
-      {
-        gender: dto.gender,
-        age: dto.age,
-        weight: dto.weight,
-        height: dto.height,
-        goal: dto.goal,
-        activity_level: dto.activityLevel,
-        daily_calories: dailyCalories,
-      },
     );
+
+    if (!profile) {
+      return this.usersProfileRepository.create({
+    user: {
+      id: userId,
+    } as User,
+
+    gender: dto.gender,
+    age: dto.age,
+    weight: dto.weight,
+    height: dto.height,
+    goal: dto.goal,
+    activity_level: dto.activityLevel,
+
+    daily_calories,
+    registration_step: 7,
+  });
+    }else {
+      throw new BadRequestException('Profile already completed');
+    }
+    
+  
+}
+
+   async updateProfile(
+    userId: string,
+    dto: UpdateUserProfileDto,
+  ) {
+    const user = await this.userRepo.updateWithRelations(
+        { id: userId },
+        {
+      ...dto
+    },
+        { profile: true },
+    );
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // Update user fields
+    if (dto.first_name !== undefined) {
+      user.first_name = dto.first_name;
+    }
+
+    if (dto.last_name !== undefined) {
+      user.last_name = dto.last_name;
+    }
+
+    // Update profile fields
+    if (user.profile) {
+      if (dto.weight !== undefined) {
+        user.profile.weight = dto.weight;
+      }
+
+      if (dto.height !== undefined) {
+        user.profile.height = dto.height;
+      }
+
+      if (dto.goal !== undefined) {
+        user.profile.goal = dto.goal;
+      }
+      if (dto.gender !== undefined) {
+        user.profile.gender = dto.gender;
+      }
+      if (dto.age !== undefined) {
+        user.profile.age = dto.age;
+      }
+
+      if (dto.activity_level !== undefined) {
+        user.profile.activity_level = dto.activity_level;
+      }
+
+      if (dto.profile_picture !== undefined) {
+        user.profile.profile_picture = dto.profile_picture;
+      }
+    }
+
+    await this.userRepo.save(user);
+
+    return user;
   }
 
-  async calculateDailyCalories(data: UpdateProfileDto): Promise<number> {
+  async getProfile(userId: string) {
+  return this.userRepo.findOneWithRelations(
+     {
+    id: userId,
+  },
+  {
+    profile: true,
+  },
+  {
+    id: true,
+    first_name: true,
+    last_name: true,
+    profile:true
+  },
+  );
+}
+  async calculateDailyCalories(data: CompleteProfileDto): Promise<number> {
     const s = data.gender === 'male' ? 5 : -161;
 
     const bmr = 10 * data.weight + 6.25 * data.height - 5 * data.age + s;
@@ -285,8 +380,8 @@ export class UsersService {
 
     let calories = bmr * activityMultiplier[data.activityLevel];
 
-    if (data.goal === WorkoutGoal.GAIN_MUSCLE) calories += 400;
-    if (data.goal === WorkoutGoal.LOSE_WEIGHT) calories -= 400;
+    if (data.goal === 'GAIN_MUSCLE') calories += 400;
+    if (data.goal === 'LOSE_WEIGHT') calories -= 400;
 
     return Math.round(calories);
   }

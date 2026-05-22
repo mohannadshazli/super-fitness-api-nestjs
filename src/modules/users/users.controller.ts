@@ -7,6 +7,7 @@ import {
   Get,
   BadRequestException,
   UseGuards,
+  Put,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import type { AuthRequest } from '../../common/types/req.type';
@@ -18,11 +19,12 @@ import {
   UpdateGoalDto,
 } from './dto/update-goal-and-activity.dto';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateProfileDto } from './dto/update-profile.dto';
+import { CompleteProfileDto } from './dto/complete-profile.dto';
 import { CheckEmailDto } from './dto/check-email.dto';
 import { ResetEmailDto } from './dto/reset-email.dto';
 import { Public } from '../../common/decorators/public_decorator';
 import { UpdatePasswordDto } from './dto/update-password.dto';
+import { UpdateUserProfileDto } from './dto/update-profile.dto';
 
 @Controller('users')
 @ApiBearerAuth()
@@ -106,18 +108,41 @@ export class UsersController {
     );
   }
 
-  @Patch('update-profile')
-  @ApiBody({ type: UpdateProfileDto })
-  updateUserProfile(
+  @Post('complete-profile')
+  @ApiBody({ type: CompleteProfileDto })
+  completeProfile(
     @Req() req: AuthRequest,
-    @Body() updateProfileDto: UpdateProfileDto,
+    @Body() completeProfileDto: CompleteProfileDto,
   ) {
     const userId = req.user?.id;
     if (!userId) {
       throw new BadRequestException('Authenticated user ID is missing');
     }
 
-    return this.usersService.updateUserProfile(userId, updateProfileDto);
+    return this.usersService.completeProfile(userId, completeProfileDto);
+  }
+  @Patch('update-profile')
+  updateProfile(
+    @Req() req: AuthRequest,
+    @Body() updateProfileDto: UpdateUserProfileDto,
+  ) {
+    const userId = req.user?.id;
+    if (!userId) {
+      throw new BadRequestException('Authenticated user ID is missing');
+    }
+
+    return this.usersService.updateProfile(userId,updateProfileDto);
+  }
+  @Get('get-profile')
+  getProfile(
+    @Req() req: AuthRequest,
+  ) {
+    const userId = req.user?.id;
+    if (!userId) {
+      throw new BadRequestException('Authenticated user ID is missing');
+    }
+
+    return this.usersService.getProfile(userId);
   }
 
   @Get('get-user-data')

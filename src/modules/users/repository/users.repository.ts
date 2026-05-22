@@ -10,6 +10,10 @@ export class UsersRepository extends AbstractRepository<User> {
   constructor(dataSource: DataSource) {
     super(dataSource);
   }
+
+  async findUserDataById(id: number): Promise<User | null> {
+    return this.findOne('e.id = :id', { id });
+  }
   async save(entity: User): Promise<User> {
     return this.repository.save(entity);
   }
