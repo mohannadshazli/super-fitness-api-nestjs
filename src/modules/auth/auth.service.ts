@@ -188,4 +188,30 @@ async resetpassword(data: ResetPasswordDto) {
   };
 }
 
+async logout(token: string, userId: string) {
+  const tokenDoc = await this.tokenRepository.findOne(
+    'e.token = :token AND e.userId = :userId AND e.isValid = :isValid',
+    {
+      token,
+      userId,
+      isValid: true,
+    },
+  );
+
+  if (!tokenDoc) {
+    throw new BadRequestException('Token already invalid or not found');
+  }
+
+  await this.tokenRepository.update(
+    'id = :id',
+    { id: tokenDoc.id },
+    { isValid: false },
+  );
+
+  return {
+    success: true,
+    message: 'Logged out successfully',
+  };
+}
+
 }

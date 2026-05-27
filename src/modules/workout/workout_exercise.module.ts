@@ -5,10 +5,11 @@ import { UsersModule } from '../users/users.module';
 import { WorkoutRepo } from './repo/workout.repo';
 import { ExerciseRepo } from './repo/exerises.repo';
 import { UsersRepository } from '../users/repository/users.repository';
+import { RedisModule } from '../redis/redis.module';
 
 @Module({
   controllers: [WorkoutController],
   providers: [WorkoutService,ExerciseRepo,WorkoutRepo,UsersRepository],
-  imports: [UsersModule],
+  imports: [UsersModule,RedisModule],
 })
 export class WorkoutModule { }

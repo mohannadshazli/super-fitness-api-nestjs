@@ -6,6 +6,7 @@ import { WorkoutRepo } from './repo/workout.repo';
 import { WorkoutLevel } from './enums/workout.level';
 import { CreateWorkoutDto } from './dto/create-workout.dto';
 import { UsersRepository } from '../users/repository/users.repository';
+import { RedisService } from '../redis/redis.service';
 
 @Injectable()
 export class WorkoutService {
@@ -13,8 +14,9 @@ export class WorkoutService {
     private readonly exerciseRepo: ExerciseRepo,
     private readonly userProfileRepo: UserProfileRepository,
     private readonly workoutRepo: WorkoutRepo,
-    private readonly UsersRepository: UsersRepository
-  ) {}
+    private readonly UsersRepository: UsersRepository,
+    private readonly redisService: RedisService
+  ) { }
 
   async createExercise(workoutId: number, dto: CreateExerciseDto) {
     return this.exerciseRepo.create({
@@ -42,11 +44,16 @@ export class WorkoutService {
   }
 
   async createWorkout(dto: CreateWorkoutDto) {
-  return this.workoutRepo.create(dto);
-}
+    return this.workoutRepo.create(dto);
+  }
 
   async getRecommendations(userId: string) {
-    console.log(userId);
+    const cacheKey = `recommendations:${userId}`;
+
+    const cached = await this.redisService.get(cacheKey);
+    if (cached) {
+      return cached;
+    }
     const profile = await this.userProfileRepo.findOne(
       'e.userId = :userId',
       { userId },
@@ -75,12 +82,15 @@ export class WorkoutService {
         level: suggestedLevel,
       },
     });
-
-    return {
+    const result = {
       user: profile,
       bmi,
       suggestedLevel,
       recommendations: workouts.data,
     };
+
+    await this.redisService.set(cacheKey, result, 600);
+
+    return result;
   }
 }

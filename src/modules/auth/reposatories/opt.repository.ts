@@ -10,4 +10,5 @@ export class  OptRepository extends AbstractRepository<Otp> {
   constructor(dataSource: DataSource) {
     super(dataSource);
   }
+  
 }

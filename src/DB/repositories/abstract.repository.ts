@@ -6,7 +6,7 @@ export abstract class AbstractRepository<T extends ObjectLiteral> {
 
   constructor(protected readonly dataSource: DataSource) { }
 
- 
+
 
   protected get repository() {
     return this.dataSource.getRepository(this.entity);
@@ -57,7 +57,7 @@ export abstract class AbstractRepository<T extends ObjectLiteral> {
       .getOne();
   }
 
-  
+
   async create(data: Partial<T>): Promise<T> {
     const entity = this.repository.create(data as T);
     return await this.repository.save(entity);
@@ -79,19 +79,17 @@ export abstract class AbstractRepository<T extends ObjectLiteral> {
     return this.findOne(where, params);
   }
 
-  async delete(where: string, params: Record<string, any> = {}): Promise<T | null> {
-    const entity = await this.findOne(where, params);
-
-    if (!entity) return null;
-
-    await this.repository
-      .createQueryBuilder("e")
+  async delete(
+    where: string,
+    params: Record<string, any> = {},
+  ): Promise<number> {
+    const result = await this.repository
+      .createQueryBuilder()
       .delete()
       .from(this.entity)
       .where(where, params)
       .execute();
-
-    return entity;
+    return result.affected ?? 0;
   }
 
 }
