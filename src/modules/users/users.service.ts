@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  NotFoundException,
   forwardRef,
   Inject,
   Injectable,
@@ -14,11 +13,10 @@ import { UsersRepository } from './repository/users.repository';
 import type { UserGoal } from './dto/user-goal.enum';
 import { ActivityLevel } from './dto/user-activity-level.enum';
 import { CreateUserDto } from './dto/create-user.dto';
-import { CompleteProfileDto } from './dto/complete-profile.dto';
 import { WorkoutGoal } from '../workout/enums/workout.goal';
 import { AuthService } from '../auth/auth.service';
 import { OptRepository } from '../auth/reposatories/opt.repository';
-import { UpdateUserProfileDto } from './dto/update-profile.dto';
+
 
 
 @Injectable()
@@ -260,224 +258,9 @@ export class UsersService {
   // GET USER DATA
   // ======================
   async getUserData(userId: string) {
-    return this.usersProfileRepository.findOne('e.userId = :userId', {
-      userId,
-    });
-  }
-
- async completeProfile(
-  userId: string,
-  dto: CompleteProfileDto,
-) {
-
-  const daily_calories = await this.calculateDailyCalories(dto);
-       let profile = await this.usersProfileRepository.findOne(
+    return this.usersProfileRepository.findOne(
       'e.userId = :userId',
-      { userId },
+      { userId }
     );
-
-    if (!profile) {
-      return this.usersProfileRepository.create({
-    user: {
-      id: userId,
-    } as User,
-
-    gender: dto.gender,
-    age: dto.age,
-    weight: dto.weight,
-    height: dto.height,
-    goal: dto.goal,
-    activity_level: dto.activityLevel,
-
-    daily_calories,
-    registration_step: 7,
-  });
-    }else {
-      throw new BadRequestException('Profile already completed');
-    }
-    
-  
-}
-
-   async updateProfile(
-    userId: string,
-    dto: UpdateUserProfileDto,
-  ) {
-    const user = await this.userRepo.updateWithRelations(
-        { id: userId },
-        {
-      ...dto
-    },
-        { profile: true },
-    );
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    // Update user fields
-    if (dto.first_name !== undefined) {
-      user.first_name = dto.first_name;
-    }
-
-    if (dto.last_name !== undefined) {
-      user.last_name = dto.last_name;
-    }
-
-    // Update profile fields
-    if (user.profile) {
-      if (dto.weight !== undefined) {
-        user.profile.weight = dto.weight;
-      }
-
-      if (dto.height !== undefined) {
-        user.profile.height = dto.height;
-      }
-
-      if (dto.goal !== undefined) {
-        user.profile.goal = dto.goal;
-      }
-      if (dto.gender !== undefined) {
-        user.profile.gender = dto.gender;
-      }
-      if (dto.age !== undefined) {
-        user.profile.age = dto.age;
-      }
-
-      if (dto.activity_level !== undefined) {
-        user.profile.activity_level = dto.activity_level;
-      }
-
-      if (dto.profile_picture !== undefined) {
-        user.profile.profile_picture = dto.profile_picture;
-      }
-    }
-
-    await this.userRepo.save(user);
-
-    return user;
-  }
-
-  async getProfile(userId: string) {
-  return this.userRepo.findOneWithRelations(
-     {
-    id: userId,
-  },
-  {
-    profile: true,
-  },
-  {
-    id: true,
-    first_name: true,
-    last_name: true,
-    profile:true
-  },
-  );
-}
-  //  calculateDailyCalories(data: CompleteProfileDto): Promise<number> {
-  //   const s = data.gender === 'male' ? 5 : -161;
-
-  //   const bmr = 10 * data.weight + 6.25 * data.height - 5 * data.age + s;
-
-  //   const activityMultiplier = {
-  //     Rookie: 1.2,
-  //     Beginner: 1.375,
-  //     Intermediate: 1.55,
-  //     Advanced: 1.725,
-  //     'True Beast': 1.9,
-  //   };
-
-  //   let calories = bmr * activityMultiplier[data.activityLevel];
-
-  //   if (data.goal === 'GAIN_MUSCLE') calories += 400;
-  //   if (data.goal === 'LOSE_WEIGHT') calories -= 400;
-
-  //   return Math.round(calories);
-  // }
-
-  // ======================
-  // UPDATE USER EMAIL
-  // ======================
-  async updateUserEmail(userId: string, newEmail: string) {
-    const existingUser = await this.userRepo.findOne('e.email = :email', {
-      email: newEmail,
-    });
-
-    if (existingUser) {
-      throw new BadRequestException('Email already exists');
-    }
-
-    await this.authService.generateOtp(newEmail);
-
-    return {
-      success: true,
-      message: 'OTP sent successfully',
-    };
-  }
-
-  // ======================
-  // RESET USER EMAIL
-  // ======================
-  async resetUserEmail(userId: string, newEmail: string, otp: string) {
-    const existingUser = await this.userRepo.findOne('e.email = :email', {
-      email: newEmail,
-    });
-
-    if (existingUser) {
-      throw new BadRequestException('Email already exists');
-    }
-
-    const existingOtp = await this.optRepo.findOne('e.email = :email', {
-      email: newEmail,
-    });
-
-    if (!existingOtp) {
-      throw new BadRequestException('Invalid OTP');
-    }
-
-    if (existingOtp.otp !== otp) {
-      throw new BadRequestException('Invalid OTP');
-    }
-
-    await this.userRepo.update('id = :id', { id: userId }, { email: newEmail });
-
-    await this.optRepo.delete('email = :email', { email: newEmail });
-
-    return {
-      success: true,
-      message: 'Email updated successfully',
-    };
-  }
-
-  // ======================
-  // UPDATE PASSWORD
-  // ======================
-  async updatePassword(
-    userId: string,
-    oldPassword: string,
-    newPassword: string,
-  ) {
-    const user = await this.userRepo.findOne('id = :id', { id: userId });
-    if (!user) {
-      throw new BadRequestException('User not found');
-    }
-
-    const isPasswordValid = await comparePassword(oldPassword, user.password);
-
-    if (!isPasswordValid) {
-      throw new BadRequestException('Invalid password');
-    }
-
-    const hashedPassword = await hashPassword(newPassword);
-    await this.userRepo.update(
-      'id = :id',
-      { id: userId },
-      { password: hashedPassword },
-    );
-
-    return {
-      success: true,
-      message: 'Password updated successfully',
-    };
   }
 }

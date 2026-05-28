@@ -37,7 +37,7 @@ export class WorkoutController {
   }
 
   @Get('exercises-by-goal')
-  async getExercisesByGoal(
+   getExercisesByGoal(
     @Query('goal', new ParseEnumPipe(WorkoutGoal)) goal: WorkoutGoal,
 
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
@@ -107,8 +107,6 @@ export class WorkoutController {
   @Get('recommend')
   getRecommendations(@Req() req: AuthRequest) {
     const userId = req.user.id;
-    return this.workoutService.getRecommendations(
-      userId,
-    );
+    return this.workoutService.getRecommendations(userId);
   }
 }

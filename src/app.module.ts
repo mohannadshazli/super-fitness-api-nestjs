@@ -11,10 +11,10 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { ScheduleModule } from '@nestjs/schedule';
 import { BullModule } from '@nestjs/bull';
 import { JobsModule } from './modules/jobs/jobs.module';
+import { FoodRecommendationsModule } from './modules/food-recomendations/food-recomendations.module';
 import { WorkoutModule } from './modules/workout/workout_exercise.module';
 import { ChatModule } from './modules/chat/chat.module';
 import { RedisModule } from './modules/redis/redis.module';
-import { FoodRecommendationsModule } from './modules/food-recomendations/food-recomendations.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -60,10 +60,10 @@ import { FoodRecommendationsModule } from './modules/food-recomendations/food-re
     OnboardingModule,
     FileUploadModule,
     JobsModule,
+    FoodRecommendationsModule,
     WorkoutModule,
     ChatModule,
-    RedisModule,
-    FoodRecommendationsModule,
+    RedisModule
   ],
   controllers: [AppController],
   providers: [AppService],
