@@ -13,24 +13,13 @@ export class CleanupProcessor {
 
     @Process('clean-cycle')
     async handleCycle(job: Job) {
-        console.log('Running cleanup cycle...');
-
-        await this.optRepo.delete(
-            'e.expiresAt < :date',
-            { date: new Date() },
-        );
-
         await this.tokenRepo.delete(
-            'e.expiresAt < :date',
-            { date: new Date() },
+            'expireAt IS NOT NULL AND expireAt < :date',
+            { date: new Date().toISOString().split('T').join(' ') },
         );
-
-        await this.queue.add(
-            'clean-cycle',
-            {},
-            {
-                delay: 60 * 1000,
-            },
+        await this.optRepo.delete(
+            'expiresAt IS NOT NULL AND expiresAt < :date',
+            { date: Date.now() },
         );
     }
 }

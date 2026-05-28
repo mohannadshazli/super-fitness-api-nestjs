@@ -13,6 +13,8 @@ import { BullModule } from '@nestjs/bull';
 import { JobsModule } from './modules/jobs/jobs.module';
 import { FoodRecommendationsModule } from './modules/food-recomendations/food-recomendations.module';
 import { WorkoutModule } from './modules/workout/workout_exercise.module';
+import { ChatModule } from './modules/chat/chat.module';
+import { RedisModule } from './modules/redis/redis.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -59,7 +61,9 @@ import { WorkoutModule } from './modules/workout/workout_exercise.module';
     FileUploadModule,
     JobsModule,
     FoodRecommendationsModule,
-    WorkoutModule
+    WorkoutModule,
+    ChatModule,
+    RedisModule
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -20,9 +20,10 @@ export class Token {
   user: User;
 
  
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: 'timestamp' })
   expireAt: Date;
 
   @Column({ default: true })
   isValid: boolean;
 }
+// model of black list token

@@ -1,5 +1,5 @@
 import { IsString, IsNumber, IsEnum, IsNotEmpty } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger'; // استيراد الـ Decorator
+import { ApiProperty } from '@nestjs/swagger'; 
 
 import { WorkoutGoal } from '../enums/workout.goal';
 import { WorkoutLevel } from '../enums/workout.level';
@@ -23,7 +23,7 @@ export class CreateWorkoutDto {
 
   @ApiProperty({
     enum: WorkoutGoal,
-    example: WorkoutGoal.FITNESS, // أو القيمة اللي تحبها كـ default
+    example: WorkoutGoal.FITNESS, 
     description: 'The main objective of the workout',
   })
   @IsEnum(WorkoutGoal)

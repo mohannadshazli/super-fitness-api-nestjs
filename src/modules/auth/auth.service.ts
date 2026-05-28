@@ -17,8 +17,8 @@ import { randomInt } from 'crypto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { TokenRepository } from './reposatories/token.repository';
 import { ResetPasswordDto } from './dto/ResetPasswordDto';
-import { comparePassword, hashPassword } from '../../common/security/hash.util';
-import { UpdatePasswordDto } from '../users/dto/update-password.dto';
+import {  hashPassword } from '../../common/security/hash.util';
+
 
 
 @Injectable()
@@ -181,4 +181,33 @@ export class AuthService {
       message: 'Password reset successfully',
     };
   }
+
+
+
+async logout(token: string, userId: string) {
+  const tokenDoc = await this.tokenRepository.findOne(
+    'e.token = :token AND e.userId = :userId AND e.isValid = :isValid',
+    {
+      token,
+      userId,
+      isValid: true,
+    },
+  );
+
+  if (!tokenDoc) {
+    throw new BadRequestException('Token already invalid or not found');
+  }
+
+  await this.tokenRepository.update(
+    'id = :id',
+    { id: tokenDoc.id },
+    { isValid: false },
+  );
+
+  return {
+    success: true,
+    message: 'Logged out successfully',
+  };
+}
+
 }

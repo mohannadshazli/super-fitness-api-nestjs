@@ -6,8 +6,7 @@ import {
   Post,
   Get,
   BadRequestException,
-  UseGuards,
-  Put,
+
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import type { AuthRequest } from '../../common/types/req.type';
@@ -22,7 +21,6 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { CompleteProfileDto } from './dto/complete-profile.dto';
 import { CheckEmailDto } from './dto/check-email.dto';
 import { ResetEmailDto } from './dto/reset-email.dto';
-import { Public } from '../../common/decorators/public_decorator';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { UpdateUserProfileDto } from './dto/update-profile.dto';
 

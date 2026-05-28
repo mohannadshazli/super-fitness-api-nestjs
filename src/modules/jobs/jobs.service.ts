@@ -1,15 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
 import type { Queue } from 'bull';
 
 @Injectable()
-export class CleanupService {
-  constructor(@InjectQueue('cleanup') private queue: Queue) {}
+export class CleanupService implements OnModuleInit {
+  constructor(@InjectQueue('cleanup') private queue: Queue) { }
 
-  async start() {
+  async onModuleInit() {
     await this.queue.add('clean-cycle', {}, {
-      delay: 0, 
+      repeat: { every: 60 * 1000 },
     });
   }
+  // sechedule job ==> to implement after specific time
+  // ttl index ===> check the document
 }
 

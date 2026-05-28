@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req } from '@nestjs/common';
+import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { CreateUserDto } from '../users/dto/create-user.dto';
@@ -6,16 +6,18 @@ import { LoginDto } from './dto/login.dto';
 import { SendDto } from './dto/sendOtp';
 import { ResetPasswordDto } from './dto/ResetPasswordDto';
 import { Public } from '../../common/decorators/public_decorator';
-import { post } from 'axios';
-import { UpdatePasswordDto } from '../users/dto/update-password.dto';
-import { type AuthRequest } from '../../common/types/req.type';
+import type { AuthRequest } from '../../common/types/req.type';
+import { AuthGuard } from '../../common/guards/auth.guard';
+
 
 @Public()
 @ApiTags('Auth')
 @Controller('auth')
-export class AuthController {
-  constructor(private authService: AuthService) {}
 
+
+export class AuthController {
+  constructor(private authService: AuthService) { }
+  @Public()
   @Post('register')
   @ApiOperation({ summary: 'Register new user' })
   @ApiBody({ type: CreateUserDto })
@@ -30,7 +32,7 @@ export class AuthController {
   register(@Body() dto: CreateUserDto) {
     return this.authService.register(dto);
   }
-
+  @Public()
   @Post('login')
   @ApiOperation({ summary: 'Login user' })
   @ApiBody({ type: LoginDto })
@@ -42,10 +44,11 @@ export class AuthController {
     status: 401,
     description: 'Invalid credentials',
   })
+  @Public()
   login(@Body() dto: LoginDto) {
     return this.authService.login(dto);
   }
-
+  @Public()
   @Post('send-otp')
   @ApiOperation({ summary: 'Send OTP to user' })
   @ApiBody({ type: SendDto })
@@ -56,7 +59,7 @@ export class AuthController {
   sendOtp(@Body() dto: SendDto) {
     return this.authService.sendOtp(dto);
   }
-
+  @Public()
   @Post('forget-password')
   @ApiOperation({ summary: 'Request password reset (send OTP)' })
   @ApiBody({ type: SendDto })
@@ -67,7 +70,7 @@ export class AuthController {
   forgetPassword(@Body() data: SendDto) {
     return this.authService.forgetPassword(data);
   }
-
+  @Public()
   @Post('reset-password')
   @ApiOperation({ summary: 'Reset user password using OTP' })
   @ApiBody({ type: ResetPasswordDto })
@@ -81,5 +84,13 @@ export class AuthController {
   })
   resetPassword(@Body() data: ResetPasswordDto) {
     return this.authService.resetpassword(data);
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('logout')
+  logout(@Req() req: AuthRequest) {
+    const token = req.headers.authorization?.split(' ')[1];
+    console.log(req.user);
+    return this.authService.logout(token!, req.user.id);
   }
 }

@@ -6,7 +6,7 @@ export abstract class AbstractRepository<T extends ObjectLiteral> {
 
   constructor(protected readonly dataSource: DataSource) { }
 
- 
+
 
   protected get repository() {
     return this.dataSource.getRepository(this.entity);
@@ -57,7 +57,7 @@ export abstract class AbstractRepository<T extends ObjectLiteral> {
       .getOne();
   }
 
-  
+
   async create(data: Partial<T>): Promise<T> {
     const entity = this.repository.create(data as T);
     return await this.repository.save(entity);
@@ -132,8 +132,7 @@ export abstract class AbstractRepository<T extends ObjectLiteral> {
       .from(this.entity)
       .where(where, params)
       .execute();
-
-    return entity;
+    return result.affected ?? 0;
   }
 
 }

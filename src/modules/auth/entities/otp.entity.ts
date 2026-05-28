@@ -15,7 +15,7 @@ export class Otp {
   @CreateDateColumn()
   createdAt: Date;
 
-  @Column({ nullable: true })
+  @Column( {type: 'timestamp'})
   expiresAt: Date;
 }
 

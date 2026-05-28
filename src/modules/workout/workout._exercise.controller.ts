@@ -37,7 +37,7 @@ export class WorkoutController {
   }
 
   @Get('exercises-by-goal')
-  async getExercisesByGoal(
+   getExercisesByGoal(
     @Query('goal', new ParseEnumPipe(WorkoutGoal)) goal: WorkoutGoal,
 
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
@@ -101,7 +101,6 @@ export class WorkoutController {
       Number(id),
     );
   }
-
 
 
 

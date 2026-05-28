@@ -17,4 +17,6 @@ export class UsersRepository extends AbstractRepository<User> {
   async save(entity: User): Promise<User> {
     return this.repository.save(entity);
   }
+
+  
 }
