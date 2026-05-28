@@ -17,8 +17,8 @@ import { randomInt } from 'crypto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { TokenRepository } from './reposatories/token.repository';
 import { ResetPasswordDto } from './dto/ResetPasswordDto';
-import { comparePassword, hashPassword } from '../../common/security/hash.util';
-import { UpdatePasswordDto } from '../users/dto/update-password.dto';
+import {  hashPassword } from '../../common/security/hash.util';
+
 
 
 @Injectable()

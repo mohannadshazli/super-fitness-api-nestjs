@@ -39,4 +39,5 @@ export class CreateExerciseDto {
   @ApiProperty({ type: 'string', format: 'binary', required: false })
   @IsOptional()
   video?: any;
+
 }

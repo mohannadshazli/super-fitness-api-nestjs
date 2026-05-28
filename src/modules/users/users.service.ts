@@ -19,8 +19,7 @@ import { WorkoutGoal } from '../workout/enums/workout.goal';
 import { AuthService } from '../auth/auth.service';
 import { OptRepository } from '../auth/reposatories/opt.repository';
 import { UpdateUserProfileDto } from './dto/update-profile.dto';
-import { UserProfile } from './entities/complete.register.entity';
-import { FindOptionsWhere } from 'typeorm';
+
 
 @Injectable()
 export class UsersService {
@@ -375,26 +374,26 @@ export class UsersService {
   },
   );
 }
-  async calculateDailyCalories(data: CompleteProfileDto): Promise<number> {
-    const s = data.gender === 'male' ? 5 : -161;
+  //  calculateDailyCalories(data: CompleteProfileDto): Promise<number> {
+  //   const s = data.gender === 'male' ? 5 : -161;
 
-    const bmr = 10 * data.weight + 6.25 * data.height - 5 * data.age + s;
+  //   const bmr = 10 * data.weight + 6.25 * data.height - 5 * data.age + s;
 
-    const activityMultiplier = {
-      Rookie: 1.2,
-      Beginner: 1.375,
-      Intermediate: 1.55,
-      Advanced: 1.725,
-      'True Beast': 1.9,
-    };
+  //   const activityMultiplier = {
+  //     Rookie: 1.2,
+  //     Beginner: 1.375,
+  //     Intermediate: 1.55,
+  //     Advanced: 1.725,
+  //     'True Beast': 1.9,
+  //   };
 
-    let calories = bmr * activityMultiplier[data.activityLevel];
+  //   let calories = bmr * activityMultiplier[data.activityLevel];
 
-    if (data.goal === 'GAIN_MUSCLE') calories += 400;
-    if (data.goal === 'LOSE_WEIGHT') calories -= 400;
+  //   if (data.goal === 'GAIN_MUSCLE') calories += 400;
+  //   if (data.goal === 'LOSE_WEIGHT') calories -= 400;
 
-    return Math.round(calories);
-  }
+  //   return Math.round(calories);
+  // }
 
   // ======================
   // UPDATE USER EMAIL
