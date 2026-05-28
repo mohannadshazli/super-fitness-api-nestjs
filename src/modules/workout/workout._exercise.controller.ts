@@ -97,8 +97,13 @@ export class WorkoutController {
 
   @Get('exercises/:workoutId')
   getExercises(@Param('workoutId') id: string) {
-    return this.workoutService.getExercisesByWorkout(Number(id));
+    return this.workoutService.getExercisesByWorkout(
+      Number(id),
+    );
   }
+
+
+
 
   @Get('recommend')
   getRecommendations(@Req() req: AuthRequest) {

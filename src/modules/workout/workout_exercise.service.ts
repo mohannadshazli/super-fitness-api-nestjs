@@ -47,14 +47,15 @@ export class WorkoutService {
   }
 
   async createWorkout(dto: CreateWorkoutDto) {
-    return this.workoutRepo.create(dto);
-  }
+  return this.workoutRepo.create(dto);
+}
 
   async getRecommendations(userId: string) {
     console.log(userId);
-    const profile = await this.userProfileRepo.findOne('e.userId = :userId', {
-      userId,
-    });
+    const profile = await this.userProfileRepo.findOne(
+      'e.userId = :userId',
+      { userId },
+    );
     if (!profile) {
       throw new Error('Profile not found');
     }
