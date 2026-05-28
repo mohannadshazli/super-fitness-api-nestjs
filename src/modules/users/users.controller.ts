@@ -6,7 +6,6 @@ import {
   Post,
   Get,
   BadRequestException,
-
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import type { AuthRequest } from '../../common/types/req.type';
@@ -120,6 +119,7 @@ export class UsersController {
     return this.usersService.completeProfile(userId, completeProfileDto);
   }
   @Patch('update-profile')
+  @ApiBody({ type: UpdateUserProfileDto })
   updateProfile(
     @Req() req: AuthRequest,
     @Body() updateProfileDto: UpdateUserProfileDto,
@@ -129,12 +129,10 @@ export class UsersController {
       throw new BadRequestException('Authenticated user ID is missing');
     }
 
-    return this.usersService.updateProfile(userId,updateProfileDto);
+    return this.usersService.updateProfile(userId, updateProfileDto);
   }
   @Get('get-profile')
-  getProfile(
-    @Req() req: AuthRequest,
-  ) {
+  getProfile(@Req() req: AuthRequest) {
     const userId = req.user?.id;
     if (!userId) {
       throw new BadRequestException('Authenticated user ID is missing');
