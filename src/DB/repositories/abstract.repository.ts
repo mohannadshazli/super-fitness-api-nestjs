@@ -1,12 +1,18 @@
-import { DataSource, DeepPartial, EntityTarget, FindOptionsRelations, FindOptionsSelect, FindOptionsWhere, ObjectLiteral } from 'typeorm';
+import {
+  DataSource,
+  DeepPartial,
+  EntityTarget,
+  FindOptionsRelations,
+  FindOptionsSelect,
+  FindOptionsWhere,
+  ObjectLiteral,
+} from 'typeorm';
 import { FindAllOptions } from '../types/findAllOptions';
 
 export abstract class AbstractRepository<T extends ObjectLiteral> {
   protected abstract readonly entity: EntityTarget<T>;
 
-  constructor(protected readonly dataSource: DataSource) { }
-
-
+  constructor(protected readonly dataSource: DataSource) {}
 
   protected get repository() {
     return this.dataSource.getRepository(this.entity);
@@ -50,19 +56,20 @@ export abstract class AbstractRepository<T extends ObjectLiteral> {
     };
   }
 
-  async findOne(where: string, params: Record<string, any> = {}): Promise<T | null> {
+  async findOne(
+    where: string,
+    params: Record<string, any> = {},
+  ): Promise<T | null> {
     return this.repository
       .createQueryBuilder('e')
       .where(where, params)
       .getOne();
   }
 
-
   async create(data: Partial<T>): Promise<T> {
     const entity = this.repository.create(data as T);
     return await this.repository.save(entity);
   }
-
 
   async update(
     where: string,
@@ -121,18 +128,21 @@ export abstract class AbstractRepository<T extends ObjectLiteral> {
     });
   }
 
-  async delete(where: string, params: Record<string, any> = {}): Promise<T | null> {
+  async delete(
+    where: string,
+    params: Record<string, any> = {},
+  ): Promise<T | null> {
     const entity = await this.findOne(where, params);
 
     if (!entity) return null;
 
     await this.repository
-      .createQueryBuilder("e")
+      .createQueryBuilder('e')
       .delete()
       .from(this.entity)
       .where(where, params)
       .execute();
-    return result.affected ?? 0;
-  }
 
+    return entity;
+  }
 }
