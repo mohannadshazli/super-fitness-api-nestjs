@@ -18,29 +18,28 @@ export class ChatGateway {
   constructor(
     private chatService: ChatService,
     private jwtService: JwtService,
-  ) { }
+  ) {}
 
- handleConnection(client: AuthenticatedSocket) {
-  try {
-    const auth = client.handshake.auth as { token?: string };
-    const token = auth?.token;
+  handleConnection(client: AuthenticatedSocket) {
+    try {
+      const auth = client.handshake.auth as { token?: string };
+      const token = auth?.token;
 
-    if (!token) {
+      if (!token) {
+        client.disconnect();
+        return;
+      }
+
+      const payload = this.jwtService.verify<JwtPayload>(token, {
+        secret: process.env.JWT_SECRET,
+      });
+
+      client.data.userId = payload.id;
+    } catch (err) {
+      console.log(err);
       client.disconnect();
-      return;
     }
-    
-
-    const payload = this.jwtService.verify<JwtPayload>(token,{
-      secret: process.env.JWT_SECRET,
-    });
-
-    client.data.userId = payload.id;
-  } catch (err) {
-    console.log(err);
-    client.disconnect();
   }
-}
 
   @SubscribeMessage('message')
   async handleMessage(
@@ -49,7 +48,7 @@ export class ChatGateway {
   ) {
     const aiReply = await this.chatService.askAI(
       data.message,
-      client.data.userId, 
+      client.data.userId,
     );
 
     client.emit('reply', {
@@ -59,9 +58,7 @@ export class ChatGateway {
 
   @SubscribeMessage('history')
   async handleHistory(@ConnectedSocket() client: AuthenticatedSocket) {
-    const history = await this.chatService.getHistory(
-      client.data.userId,
-    );
+    const history = await this.chatService.getHistory(client.data.userId);
 
     client.emit('history', history);
   }

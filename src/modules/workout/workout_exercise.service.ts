@@ -6,7 +6,6 @@ import { WorkoutRepo } from './repo/workout.repo';
 import { WorkoutLevel } from './enums/workout.level';
 import { CreateWorkoutDto } from './dto/create-workout.dto';
 import { UsersRepository } from '../users/repository/users.repository';
-import { RedisService } from '../redis/redis.service';
 import { UploadedFileResponse } from '../../common/types/uploaded-file.type';
 import { WorkoutGoal } from './enums/workout.goal';
 
@@ -17,8 +16,6 @@ export class WorkoutService {
     private readonly userProfileRepo: UserProfileRepository,
     private readonly workoutRepo: WorkoutRepo,
     private readonly UsersRepository: UsersRepository,
-    private readonly redisService: RedisService,
-    
   ) {}
 
   async createExercise(
@@ -54,16 +51,10 @@ export class WorkoutService {
   }
 
   async getRecommendations(userId: string) {
-    const cacheKey = `recommendations:${userId}`;
-
-    const cached = await this.redisService.get(cacheKey);
-    if (cached) {
-      return cached;
-    }
-    const profile = await this.userProfileRepo.findOne(
-      'e.userId = :userId',
-      { userId },
-    );
+    console.log(userId);
+    const profile = await this.userProfileRepo.findOne('e.userId = :userId', {
+      userId,
+    });
     if (!profile) {
       throw new Error('Profile not found');
     }
@@ -87,15 +78,20 @@ export class WorkoutService {
         level: suggestedLevel,
       },
     });
-    const result = {
+
+    return {
       user: profile,
       bmi,
       suggestedLevel,
       recommendations: workouts.data,
     };
+  }
 
-    await this.redisService.set(cacheKey, result, 600);
-
-    return result;
+  async getExercisesByGoal(goal: WorkoutGoal, page: number, limit: number) {
+    return await this.exerciseRepo.findExercisesByWorkoutGoal(
+      goal,
+      page,
+      limit,
+    );
   }
 }
