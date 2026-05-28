@@ -1,4 +1,4 @@
-import { DataSource, EntityTarget, ObjectLiteral } from 'typeorm';
+import { DataSource, DeepPartial, EntityTarget, FindOptionsRelations, FindOptionsSelect, FindOptionsWhere, ObjectLiteral } from 'typeorm';
 import { FindAllOptions } from '../types/findAllOptions';
 
 export abstract class AbstractRepository<T extends ObjectLiteral> {
@@ -79,12 +79,55 @@ export abstract class AbstractRepository<T extends ObjectLiteral> {
     return this.findOne(where, params);
   }
 
-  async delete(
-    where: string,
-    params: Record<string, any> = {},
-  ): Promise<number> {
-    const result = await this.repository
-      .createQueryBuilder()
+  async findOneWithRelations(
+    where: FindOptionsWhere<T>,
+    relations?: FindOptionsRelations<T>,
+    select?: FindOptionsSelect<T>,
+  ): Promise<T | null> {
+    return this.repository.findOne({
+      where,
+      relations,
+      select,
+    });
+  }
+
+  async updateWithRelations(
+    where: FindOptionsWhere<T>,
+    data: DeepPartial<T>,
+    relations?: FindOptionsRelations<T>,
+    select?: FindOptionsSelect<T>,
+  ): Promise<T | null> {
+    // Find existing entity
+    const entity = await this.repository.findOne({
+      where,
+      relations,
+    });
+
+    if (!entity) {
+      return null;
+    }
+
+    // Merge new data
+    Object.assign(entity, data);
+
+    // Save
+    await this.repository.save(entity);
+
+    // Return updated entity
+    return this.repository.findOne({
+      where,
+      relations,
+      select,
+    });
+  }
+
+  async delete(where: string, params: Record<string, any> = {}): Promise<T | null> {
+    const entity = await this.findOne(where, params);
+
+    if (!entity) return null;
+
+    await this.repository
+      .createQueryBuilder("e")
       .delete()
       .from(this.entity)
       .where(where, params)

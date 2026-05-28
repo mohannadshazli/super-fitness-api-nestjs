@@ -14,6 +14,7 @@ import { JobsModule } from './modules/jobs/jobs.module';
 import { WorkoutModule } from './modules/workout/workout_exercise.module';
 import { ChatModule } from './modules/chat/chat.module';
 import { RedisModule } from './modules/redis/redis.module';
+import { FoodRecommendationsModule } from './modules/food-recomendations/food-recomendations.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -61,7 +62,8 @@ import { RedisModule } from './modules/redis/redis.module';
     JobsModule,
     WorkoutModule,
     ChatModule,
-    RedisModule
+    RedisModule,
+    FoodRecommendationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

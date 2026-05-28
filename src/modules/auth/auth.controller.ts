@@ -1,11 +1,6 @@
 import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBody,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
 import { SendDto } from './dto/sendOtp';
@@ -14,8 +9,11 @@ import { Public } from '../../common/decorators/public_decorator';
 import type { AuthRequest } from '../../common/types/req.type';
 import { AuthGuard } from '../../common/guards/auth.guard';
 
+
+@Public()
 @ApiTags('Auth')
 @Controller('auth')
+
 
 export class AuthController {
   constructor(private authService: AuthService) { }

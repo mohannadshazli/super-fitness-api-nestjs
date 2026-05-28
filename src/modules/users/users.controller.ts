@@ -1,4 +1,13 @@
-import { Controller, Body, Patch, Req, Post, Get } from '@nestjs/common';
+import {
+  Controller,
+  Body,
+  Patch,
+  Req,
+  Post,
+  Get,
+  BadRequestException,
+
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import type { AuthRequest } from '../../common/types/req.type';
 import type { Gender } from './dto/gender.type';
@@ -9,6 +18,11 @@ import {
   UpdateGoalDto,
 } from './dto/update-goal-and-activity.dto';
 import { CreateUserDto } from './dto/create-user.dto';
+import { CompleteProfileDto } from './dto/complete-profile.dto';
+import { CheckEmailDto } from './dto/check-email.dto';
+import { ResetEmailDto } from './dto/reset-email.dto';
+import { UpdatePasswordDto } from './dto/update-password.dto';
+import { UpdateUserProfileDto } from './dto/update-profile.dto';
 
 @Controller('users')
 @ApiBearerAuth()
@@ -31,6 +45,21 @@ export class UsersController {
   })
   createUser(@Body() dto: CreateUserDto) {
     return this.usersService.createUser(dto);
+  }
+
+  @Post('get-or-create-profile')
+  @ApiOperation({ summary: 'Get or create user profile' })
+  @ApiResponse({
+    status: 200,
+    description: 'User profile retrieved or created successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Validation error',
+  })
+  getOrCreateProfile(@Req() req: AuthRequest) {
+    const userId = req.user.id;
+    return this.usersService.getOrCreateProfile(userId);
   }
 
   @Patch('gender')
@@ -77,10 +106,103 @@ export class UsersController {
     );
   }
 
+  @Post('complete-profile')
+  @ApiBody({ type: CompleteProfileDto })
+  completeProfile(
+    @Req() req: AuthRequest,
+    @Body() completeProfileDto: CompleteProfileDto,
+  ) {
+    const userId = req.user?.id;
+    if (!userId) {
+      throw new BadRequestException('Authenticated user ID is missing');
+    }
 
-  @Get("get-user-data")
+    return this.usersService.completeProfile(userId, completeProfileDto);
+  }
+  @Patch('update-profile')
+  updateProfile(
+    @Req() req: AuthRequest,
+    @Body() updateProfileDto: UpdateUserProfileDto,
+  ) {
+    const userId = req.user?.id;
+    if (!userId) {
+      throw new BadRequestException('Authenticated user ID is missing');
+    }
+
+    return this.usersService.updateProfile(userId,updateProfileDto);
+  }
+  @Get('get-profile')
+  getProfile(
+    @Req() req: AuthRequest,
+  ) {
+    const userId = req.user?.id;
+    if (!userId) {
+      throw new BadRequestException('Authenticated user ID is missing');
+    }
+
+    return this.usersService.getProfile(userId);
+  }
+
+  @Get('get-user-data')
   getUserData(@Req() req: AuthRequest) {
     const userId = req.user.id;
     return this.usersService.getUserData(userId);
+  }
+
+  @Post('update-user-email')
+  @ApiOperation({ summary: 'Update user email' })
+  @ApiBody({
+    type: CheckEmailDto,
+    description: 'New email to update',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Otp sent to new email successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Validation error',
+  })
+  updateUserEmail(@Req() req: AuthRequest, @Body() dto: CheckEmailDto) {
+    const userId = req.user.id;
+    return this.usersService.updateUserEmail(userId, dto.email);
+  }
+
+  @Post('reset-user-email')
+  @ApiOperation({ summary: 'Reset user email' })
+  @ApiBody({
+    type: ResetEmailDto,
+    description: 'New email and OTP to reset',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Email updated successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Validation error',
+  })
+  resetUserEmail(@Req() req: AuthRequest, @Body() dto: ResetEmailDto) {
+    const userId = req.user.id;
+    return this.usersService.resetUserEmail(userId, dto.email, dto.otp);
+  }
+
+  @Post('update-password')
+  @ApiOperation({ summary: 'Update user password' })
+  @ApiBody({ type: UpdatePasswordDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Password updated successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid password',
+  })
+  updatePassword(@Req() req: AuthRequest, @Body() data: UpdatePasswordDto) {
+    return this.usersService.updatePassword(
+      req.user.id,
+      data.oldPassword,
+      data.newPassword,
+    );
   }
 }

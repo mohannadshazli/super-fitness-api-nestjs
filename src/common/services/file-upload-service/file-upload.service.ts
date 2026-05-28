@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import cloudinary from './config/cloudinary.config';
 import {
-  UploadedFileResponse,
+  UploadedImageResponse,
   UploadedVideoResponse,
 } from '../../types/uploaded-file.type';
 import { Readable } from 'stream';
 
 @Injectable()
 export class FileUploadService {
-  async uploadSingle(file: Express.Multer.File): Promise<UploadedFileResponse> {
+  async uploadImage(file: Express.Multer.File): Promise<UploadedImageResponse> {
     return new Promise((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
         { folder: 'fitness-app' },
@@ -27,9 +27,9 @@ export class FileUploadService {
 
   async uploadMultiple(
     files: Express.Multer.File[],
-  ): Promise<UploadedFileResponse[]> {
+  ): Promise<UploadedImageResponse[]> {
     const uploads = files.map((file) => {
-      return new Promise<UploadedFileResponse>((resolve, reject) => {
+      return new Promise<UploadedImageResponse>((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
           { folder: 'fitness-app', resource_type: 'image' },
           (error, result) => {
