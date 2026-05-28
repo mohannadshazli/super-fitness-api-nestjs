@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { UserProfileRepository } from './repository/user-profile.repository';
 import { Gender } from './dto/gender.type';
 import { User } from './entities/user.entity';
@@ -9,13 +14,18 @@ import type { UserGoal } from './dto/user-goal.enum';
 import { ActivityLevel } from './dto/user-activity-level.enum';
 import { CreateUserDto } from './dto/create-user.dto';
 import { WorkoutGoal } from '../workout/enums/workout.goal';
+import { AuthService } from '../auth/auth.service';
+import { OptRepository } from '../auth/reposatories/opt.repository';
+
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly usersProfileRepository: UserProfileRepository,
     private readonly userRepo: UsersRepository,
-  ) { }
+    @Inject(forwardRef(() => AuthService)) private authService: AuthService,
+    @Inject(forwardRef(() => OptRepository)) private optRepo: OptRepository,
+  ) {}
 
   // ======================
   // CREATE USER
@@ -125,7 +135,7 @@ export class UsersService {
       { userId }
     );
 
-    if (!profile) return null;
+    if (!profile) return null; 
 
     profile.weight = weight;
     profile.registration_step = 3;
@@ -211,6 +221,7 @@ export class UsersService {
 
 
     if (!user) {
+      console.log('login user');
       throw new Error('Invalid credentials');
     }
 
@@ -218,7 +229,7 @@ export class UsersService {
     const isPasswordValid = await comparePassword(password, user.password);
 
     if (!isPasswordValid) {
-      throw new Error('Invalid credentials');
+      throw new BadRequestException('Invalid credentials');
     }
 
 
