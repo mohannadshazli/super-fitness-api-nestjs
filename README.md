@@ -1,98 +1,128 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Super Fitness API (NestJS)
+[![Ask DeepWiki](https://devin.ai/assets/askdeepwiki.png)](https://deepwiki.com/mohannadshazli/super-fitness-api-nestjs)
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This repository contains the backend API for the Super Fitness application, a comprehensive platform for managing workouts, diet, and fitness goals. Built with the NestJS framework, it provides a scalable, modular, and efficient server-side solution.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## ✨ Features
 
-## Description
+-   **User Authentication & Authorization**: Secure user registration, login with JWT (Access & Refresh Tokens), and password management (OTP-based reset).
+-   **Profile Management**: Multi-step user onboarding to collect data like age, weight, height, gender, fitness goals, and activity level.
+-   **Workout Engine**:
+    -   Create and manage custom workouts and exercises.
+    -   Personalized workout recommendations based on user BMI and goals.
+    -   Filter exercises by specific goals (e.g., `LOSE_WEIGHT`, `GAIN_MUSCLE`).
+-   **Food Recommendation System**:
+    -   Integrates with the Spoonacular API to fetch nutritional data.
+    -   Delivers tailored meal suggestions for breakfast, lunch, and dinner.
+    -   A custom scoring algorithm ranks food based on user's caloric needs, macros, and fitness objectives.
+-   **AI Smart Coach**:
+    -   Real-time chat functionality using WebSockets (Socket.IO).
+    -   Integration with the Groq API (Llama 3.1) to provide an AI-powered assistant.
+    -   Persistent chat history for each user.
+-   **File Uploads**: Supports image and video uploads for exercises to Cloudinary.
+-   **Background Jobs**: Uses Bull for scheduled jobs, such as cleaning up expired OTPs and authentication tokens.
+-   **API Documentation**: Automatically generated and interactive API documentation with Swagger (OpenAPI).
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 🛠️ Tech Stack
 
-## Project setup
+-   **Framework**: NestJS
+-   **Language**: TypeScript
+-   **Database**: PostgreSQL with TypeORM
+-   **Authentication**: JWT (JSON Web Tokens)
+-   **Real-time**: Socket.IO & WebSockets
+-   **Job Queue**: Bull & Redis
+-   **Caching**: Redis
+-   **File Storage**: Cloudinary
+-   **External APIs**: Spoonacular (Food), Groq (AI)
+-   **Email**: Nodemailer
 
-```bash
-$ npm install
-```
+## 🚀 Getting Started
 
-## Compile and run the project
+### Prerequisites
 
-```bash
-# development
-$ npm run start
+-   Node.js (>= 20.x)
+-   npm
+-   PostgreSQL
+-   Redis
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Run tests
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### 1. Clone the Repository
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+git clone https://github.com/mohannadshazli/super-fitness-api-nestjs.git
+cd super-fitness-api-nestjs
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### 2. Install Dependencies
 
-## Resources
+```bash
+npm install
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+### 3. Environment Configuration
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+Create a `.env` file in the root of the project and add the following environment variables.
 
-## Support
+```env
+# Application
+PORT=3000
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+# Database
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=your_db_user
+DB_PASSWORD=your_db_password
+DB_NAME=super_fitness_db
 
-## Stay in touch
+# JWT
+JWT_SECRET=your_jwt_secret
+JWT_EXPIRATION_TIME=1d
+JWT_REFRESH_TOKEN_SECRET=your_jwt_refresh_secret
+JWT_REFRESH_TOKEN_EXPIRATION_TIME=7d
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+# Cloudinary
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 
-## License
+# External APIs
+SPOONACULAR_KEY=your_spoonacular_api_key
+GROQ_API_KEY=your_groq_api_key
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+# Nodemailer
+MAIL_HOST=your_mail_host
+MAIL_PORT=your_mail_port
+MAIL_USER=your_mail_user
+Node_Mailer_Main_Pass=your_mail_password
+```
+
+### 4. Running the Application
+
+```bash
+# Development mode with hot-reload
+npm run start:dev
+
+# Production mode
+npm run build
+npm run start:prod
+```
+
+### 5. Running Tests
+
+```bash
+# Unit tests
+npm run test
+
+# End-to-end tests
+npm run test:e2e
+
+# Test coverage
+npm run test:cov
+```
+
+## 📖 API Documentation
+
+Once the application is running, you can access the interactive Swagger API documentation at:
+
+`http://localhost:3000/api`
+
+This documentation provides a complete list of available endpoints, their required parameters, and allows you to test them directly from your browser.
