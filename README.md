@@ -1,49 +1,48 @@
 # Super Fitness API (NestJS)
-[![Ask DeepWiki](https://devin.ai/assets/askdeepwiki.png)](https://deepwiki.com/mohannadshazli/super-fitness-api-nestjs)
 
 This repository contains the backend API for the Super Fitness application, a comprehensive platform for managing workouts, diet, and fitness goals. Built with the NestJS framework, it provides a scalable, modular, and efficient server-side solution.
 
 ## ✨ Features
 
--   **User Authentication & Authorization**: Secure user registration, login with JWT (Access & Refresh Tokens), and password management (OTP-based reset).
--   **Profile Management**: Multi-step user onboarding to collect data like age, weight, height, gender, fitness goals, and activity level.
--   **Workout Engine**:
-    -   Create and manage custom workouts and exercises.
-    -   Personalized workout recommendations based on user BMI and goals.
-    -   Filter exercises by specific goals (e.g., `LOSE_WEIGHT`, `GAIN_MUSCLE`).
--   **Food Recommendation System**:
-    -   Integrates with the Spoonacular API to fetch nutritional data.
-    -   Delivers tailored meal suggestions for breakfast, lunch, and dinner.
-    -   A custom scoring algorithm ranks food based on user's caloric needs, macros, and fitness objectives.
--   **AI Smart Coach**:
-    -   Real-time chat functionality using WebSockets (Socket.IO).
-    -   Integration with the Groq API (Llama 3.1) to provide an AI-powered assistant.
-    -   Persistent chat history for each user.
--   **File Uploads**: Supports image and video uploads for exercises to Cloudinary.
--   **Background Jobs**: Uses Bull for scheduled jobs, such as cleaning up expired OTPs and authentication tokens.
--   **API Documentation**: Automatically generated and interactive API documentation with Swagger (OpenAPI).
+- **User Authentication & Authorization**: Secure user registration, login with JWT (Access & Refresh Tokens), and password management (OTP-based reset).
+- **Profile Management**: Multi-step user onboarding to collect data like age, weight, height, gender, fitness goals, and activity level.
+- **Workout Engine**:
+  - Create and manage custom workouts and exercises.
+  - Personalized workout recommendations based on user BMI and goals.
+  - Filter exercises by specific goals (e.g., `LOSE_WEIGHT`, `GAIN_MUSCLE`).
+- **Food Recommendation System**:
+  - Integrates with the Spoonacular API to fetch nutritional data.
+  - Delivers tailored meal suggestions for breakfast, lunch, and dinner.
+  - A custom scoring algorithm ranks food based on user's caloric needs, macros, and fitness objectives.
+- **AI Smart Coach**:
+  - Real-time chat functionality using WebSockets (Socket.IO).
+  - Integration with the Groq API (Llama 3.1) to provide an AI-powered assistant.
+  - Persistent chat history for each user.
+- **File Uploads**: Supports image and video uploads for exercises to Cloudinary.
+- **Background Jobs**: Uses Bull for scheduled jobs, such as cleaning up expired OTPs and authentication tokens.
+- **API Documentation**: Automatically generated and interactive API documentation with Swagger (OpenAPI).
 
 ## 🛠️ Tech Stack
 
--   **Framework**: NestJS
--   **Language**: TypeScript
--   **Database**: PostgreSQL with TypeORM
--   **Authentication**: JWT (JSON Web Tokens)
--   **Real-time**: Socket.IO & WebSockets
--   **Job Queue**: Bull & Redis
--   **Caching**: Redis
--   **File Storage**: Cloudinary
--   **External APIs**: Spoonacular (Food), Groq (AI)
--   **Email**: Nodemailer
+- **Framework**: NestJS
+- **Language**: TypeScript
+- **Database**: PostgreSQL with TypeORM
+- **Authentication**: JWT (JSON Web Tokens)
+- **Real-time**: Socket.IO & WebSockets
+- **Job Queue**: Bull & Redis
+- **Caching**: Redis
+- **File Storage**: Cloudinary
+- **External APIs**: Spoonacular (Food), Groq (AI)
+- **Email**: Nodemailer
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
--   Node.js (>= 20.x)
--   npm
--   PostgreSQL
--   Redis
+- Node.js (>= 20.x)
+- npm
+- PostgreSQL
+- Redis
 
 ### 1. Clone the Repository
 
